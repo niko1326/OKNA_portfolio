@@ -87,11 +87,6 @@
     .section{padding:28px 0}
     .section h2{font-size:24px;margin-top:0}
     .cards{grid-template-columns:1fr;gap:12px}
-    .ba-img{height:280px}
-    .ba-range{height:6px}
-    .ba-range::-webkit-slider-thumb{width:24px;height:24px}
-    .ba-range::-moz-range-thumb{width:24px;height:24px}
-    .ba-labels{font-size:11px;padding:0 4px}
     .foot{padding:20px 0;font-size:13px;text-align:center}
   }
   /* Extra small screens */
@@ -100,16 +95,14 @@
     .hero h1{font-size:24px}
     .hero p{font-size:15px}
     .nav a.btn{padding:7px 10px;font-size:13px}
-    .ba-img{height:240px}
   }
-/* Before/After slider */
-  .ba-wrap{position:relative;overflow:hidden;border-radius:8px}
-  .ba-img{display:block;width:100%;height:360px;object-fit:cover}
-  .ba-after{position:absolute;inset:0;clip-path:inset(0 0 0 50%)}
-  .ba-range{position:absolute;inset:auto 0 0 0;margin:0;width:100%;appearance:none;height:4px;background:rgba(0,0,0,.1)}
-  .ba-range::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
-  .ba-range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff}
-  .ba-labels{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+/* Before/After comparison (no slider) */
+  .ba-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ba-img{display:block;width:100%;aspect-ratio:var(--ba-aspect, 4 / 3);object-fit:cover;border-radius:8px}
+  .ba-range, .ba-labels{display:none !important}
+  @media (max-width:600px){
+    .ba-wrap{grid-template-columns:1fr}
+  }
 </style>
   <script type="application/ld+json">
   {
@@ -119,7 +112,7 @@
     "image":"",
     "address":{"@type":"PostalAddress","addressLocality":"Gdańsk","addressRegion":"Pomorskie","addressCountry":"PL"},
     "areaServed":"Gdańsk, Wrzeszcz",
-    "telephone":"+48 600 000 000",
+    "telephone":"+48 735 400 610",
     "url":"https://twoj-login.github.io/",
     "priceRange":"PLN",
     "sameAs":[]
@@ -149,16 +142,16 @@
         <h1>Czyste okna, jasne mieszkanie ✨</h1>
         <p>Realne realizacje <strong>przed / po</strong> z Gdańska i okolic. Jeśli chcesz uzyskać dokładną wycenę, po prostu skontaktuj się z nami telefonicznie.</p>
         <div class="cta">
-          <a class="btn primary" href="tel:+48123123123">Zadzwoń: 123 123 123</a>
-          <a class="btn" href="https://wa.me/48123123123" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn primary" href="tel:+48735400610">Zadzwoń: 735 400 610</a>
+          <a class="btn" href="https://wa.me/48735400610" target="_blank" rel="noopener">WhatsApp</a>
         </div>
       </div>
       <div class="card">
         <h3>Informacje</h3>
         <ul>
-          <li>✔️ Mycie szyb, ram, parapetów, balkony</li>
-          <li>✔️ Dojazd: Gdańsk / Wrzeszcz / okolice</li>
-          <li>✔️ Wycena przez telefon / WhatsApp</li>
+          <li>Mycie szyb, ram, parapetów, balkony</li>
+          <li>Dojazd: Gdańsk / Wrzeszcz / okolice</li>
+          <li>Wycena przez telefon / WhatsApp</li>
         </ul>
       </div>
     </section>
@@ -199,12 +192,12 @@
       <div class="grid cards">
         <div class="card">
           <h3>Telefon</h3>
-          <p><a class="btn primary" href="tel:+48123123123">Zadzwoń: 123 123 123</a></p>
+          <p><a class="btn primary" href="tel:+48735400610">Zadzwoń: 735 400 610</a></p>
           <p class="muted">Najprościej – krótka rozmowa i orientacyjna wycena.</p>
         </div>
         <div class="card">
           <h3>WhatsApp</h3>
-          <p><a class="btn" href="https://wa.me/48123123123" target="_blank" rel="noopener">Napisz na WhatsApp</a></p>
+          <p><a class="btn" href="https://wa.me/48735400610" target="_blank" rel="noopener">Napisz na WhatsApp</a></p>
           <p class="muted">Możesz wysłać zdjęcia okien/balkonu dla dokładniejszej wyceny.</p>
         </div>
         <div class="card">
@@ -212,7 +205,7 @@
           <p>Gdańsk – Wrzeszcz, Zaspa, Oliwa i okolice</p>
         </div>
       </div>
-      <p style="margin-top:12px" class="muted">Aby uzyskać wycenę, skontaktuj się z nami pod nr tel.: <strong>123 123 123</strong>.</p>
+      <p style="margin-top:12px" class="muted">Aby uzyskać wycenę, skontaktuj się z nami pod nr tel.: <strong>735 400 610</strong>.</p>
     </section>
 
     <div class="foot wrap">
@@ -226,18 +219,7 @@
   // aktualny rok w stopce
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Before/After slider logic
-  document.querySelectorAll('.ba').forEach((card)=>{
-    const wrap = card.querySelector('.ba-wrap');
-    const after = wrap.querySelector('.ba-after');
-    const range = wrap.querySelector('.ba-range');
-    const update = ()=>{
-      const v = range.valueAsNumber; // 0..100
-      after.style.clipPath = `inset(0 0 0 ${v}%)`;
-    };
-    range.addEventListener('input', update);
-    update();
-  });
+  // Suwak usunięty – proste porównanie dwóch zdjęć (desktop: obok siebie, mobile: jedno pod drugim)
 </script>
 </body>
 </html>
