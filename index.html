@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Czyste Okna Gdańsk – Mycie okien i balkonów</title>
+  <meta name="description" content="Profesjonalne mycie okien i balkonów w Gdańsku / Wrzeszczu. Zobacz portfolio przed/po, pakiety usług i skontaktuj się, aby umówić termin." />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="Czyste Okna Gdańsk – Mycie okien i balkonów" />
+  <meta property="og:description" content="Portfolio przed/po, cennik pakietów, szybki kontakt (telefon / WhatsApp / formularz)." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pl_PL" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+  :root{
+    --bg:#f8f9fa; --fg:#2d2d2d; --muted:#666; --accent:#4a7c59; --card:#ffffff; --line:#ddd;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:Inter, sans-serif;background:var(--bg);color:var(--fg)}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{position:sticky;top:0;background:#ffffff;border-bottom:1px solid var(--line);}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;gap:10px;align-items:center}
+  .logo{width:36px;height:36px;border-radius:6px;background:#4a7c59;display:grid;place-items:center;color:#fff;font-weight:900}
+  .nav a.btn{padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#f0f0f0;}
+  .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;padding:56px 0 32px;border-bottom:1px solid var(--line)}
+  .hero h1{font-size:42px;line-height:1.1;margin:0 0 12px}
+  .hero p{color:var(--muted);font-size:18px;margin:0 0 18px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border-radius:8px;border:1px solid var(--line);background:#e6e6e6;color:var(--fg);font-weight:600}
+  .btn.primary{background:var(--accent);color:#fff;border:none}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px}
+  .section{padding:40px 0;border-bottom:1px solid var(--line)}
+  .muted{color:var(--muted)}
+  .grid{display:grid;gap:18px}
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .gallery figure{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .gallery img{width:100%;height:160px;object-fit:cover;display:block}
+  .tag{display:inline-block;font-size:12px;padding:4px 8px;border-radius:12px;border:1px solid var(--line);background:#f0f0f0;color:var(--muted)}
+  .price{font-size:28px;font-weight:800}
+  .pack{display:flex;flex-direction:column;gap:8px}
+  .foot{padding:24px 0;color:var(--muted);font-size:14px}
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .lightbox img{max-width:95vw;max-height:85vh;border-radius:8px}
+  .close{position:absolute;top:20px;right:20px;font-size:18px}
+  /* Formularz */
+  form{display:block}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-grid .full{grid-column:1 / -1}
+  label{font-size:14px;color:#333;display:block;margin:8px 0 6px}
+  input, select, textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#222}
+  textarea{min-height:110px;resize:vertical}
+  .help{font-size:12px;color:var(--muted)}
+  .alert{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:#f3f7f4;margin-top:10px;display:none}
+  .alert.error{background:#fff3f3}
+  .req{color:#a33}
+  @media (max-width:920px){.hero{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.gallery{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}}
+  @media (max-width:600px){.cards{grid-template-columns:1fr}.hero h1{font-size:34px}}
+</style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"LocalBusiness",
+    "name":"Czyste Okna Gdańsk",
+    "image":"",
+    "address":{"@type":"PostalAddress","addressLocality":"Gdańsk","addressRegion":"Pomorskie","addressCountry":"PL"},
+    "areaServed":"Gdańsk, Wrzeszcz",
+    "telephone":"+48 600 000 000",
+    "url":"https://twoj-login.github.io/",
+    "priceRange":"PLN",
+    "sameAs":[]
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <div class="logo">OK</div>
+        <div>
+          <strong>Czyste Okna Gdańsk</strong><br>
+          <span class="muted">Mycie okien i balkonów</span>
+        </div>
+      </div>
+      <nav>
+        <a class="btn" href="#portfolio">Portfolio</a>
+        <a class="btn" href="#pakiety">Pakiety</a>
+        <a class="btn" href="#kontakt">Kontakt</a>
+        <a class="btn" href="#rezerwacja">Rezerwacja</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="start">
+      <div>
+        <h1>Czyste okna, jasne mieszkanie ✨</h1>
+        <p>Profesjonalne mycie okien, ram i balkonów w <strong>Gdańsku / Wrzeszczu</strong>. Zobacz realizacje (przed/po), wybierz pakiet i umów szybki termin.</p>
+        <div class="cta">
+          <a class="btn primary" href="#rezerwacja">Umów termin</a>
+          <a class="btn" href="#portfolio">Zobacz portfolio</a>
+          <span class="tag">Średni czas: 60–90 min / mieszkanie</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Dlaczego my?</h3>
+        <ul>
+          <li>✔️ Realne zdjęcia z realizacji</li>
+          <li>✔️ Przejrzyste pakiety i ceny</li>
+          <li>✔️ Płatność kartą / BLIK</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="portfolio">
+      <h2>Portfolio – przed / po</h2>
+      <p class="muted">Dodaj własne zdjęcia z realizacji (najlepiej 8–16). Kliknięcie powiększa zdjęcie w podglądzie.</p>
+      <div class="gallery" id="galeria">
+        <!-- PODMIEŃ adresy src na własne zdjęcia w folderze /img lub zewnętrzne URL-e -->
+        <figure><img src="https://images.unsplash.com/photo-1486304873000-235643847519?q=80&w=900&auto=format&fit=crop" alt="Mycie okien – balkon" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1515263487990-61b07816b324?q=80&w=900&auto=format&fit=crop" alt="Okna przed/po" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?q=80&w=900&auto=format&fit=crop" alt="Szklenia" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1586880244406-556ebe35f282?q=80&w=900&auto=format&fit=crop" alt="Loggia" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=900&auto=format&fit=crop" alt="Witryna" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=900&auto=format&fit=crop" alt="Detale" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1449247666642-264389f5f5b1?q=80&w=900&auto=format&fit=crop" alt="Przeszklenia" loading="lazy"></figure>
+        <figure><img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=900&auto=format&fit=crop" alt="Balkon" loading="lazy"></figure>
+      </div>
+    </section>
+
+    <section class="section" id="pakiety">
+      <h2>Pakiety i ceny</h2>
+      <p class="muted">Przykładowe – dostosuj do siebie. Możesz podać widełki lub „od”.</p>
+      <div class="grid cards">
+        <div class="card pack">
+          <span class="tag">Najczęściej wybierany</span>
+          <h3>Standard – mieszkanie</h3>
+          <div class="price">od 149 zł</div>
+          <ul>
+            <li>Mycie szyb + ramy + parapety</li>
+            <li>Do 6 okien (typowe M2/M3)</li>
+            <li>Środki pro i bezpieczne dla dzieci/zwierząt</li>
+          </ul>
+        </div>
+        <div class="card pack">
+          <h3>Balkon Plus</h3>
+          <div class="price">od 99 zł</div>
+          <ul>
+            <li>Mycie szyb i balustrad balkonu/loggii</li>
+            <li>Doczyszczanie prowadnic / zakamarków</li>
+            <li>Opcja: impregnacja +39 zł</li>
+          </ul>
+        </div>
+        <div class="card pack">
+          <h3>Full / Po remoncie</h3>
+          <div class="price">wycena</div>
+          <ul>
+            <li>Zeskrobanie zapraw, osadów po tynku</li>
+            <li>Dokładne doczyszczanie uszczelek i ramek</li>
+            <li>Oględziny na miejscu / zdjęcia do wyceny</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="opinie">
+      <h2>Opinie klientów</h2>
+      <p class="muted">Dodaj krótkie referencje po pierwszych realizacjach.</p>
+      <div class="grid cards">
+        <div class="card"><h3>Anna, Wrzeszcz</h3><p>„Okna błyszczą, balkon jak nowy. Szybko i punktualnie.”</p></div>
+        <div class="card"><h3>Michał, Zaspa</h3><p>„Świetny kontakt, uczciwa cena, polecam sąsiadom.”</p></div>
+        <div class="card"><h3>Kasia, Oliwa</h3><p>„Dobre podejście do detali i ram. Na pewno wrócę.”</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="rezerwacja">
+      <h2>Rezerwacja terminu</h2>
+      <p class="muted">Wybierz wygodny sposób kontaktu. Formularz przyjmie podstawowe dane do szybkiej wyceny.</p>
+      <div class="grid cards">
+        <div class="card">
+          <h3>WhatsApp</h3>
+          <p><a class="btn" href="https://wa.me/48600000000" target="_blank" rel="noopener">Napisz na WhatsApp</a></p>
+          <p class="muted">Przykładowy numer – podmień na swój.</p>
+        </div>
+        <div class="card">
+          <h3>Telefon</h3>
+          <p><a class="btn" href="tel:+48600000000">Zadzwoń: +48 600 000 000</a></p>
+        </div>
+        <div class="card">
+  <h3>Formularz – szybka wycena</h3>
+  <form id="bookingForm" action="https://formspree.io/f/YOUR_CODE" method="POST" novalidate>
+    <div class="form-grid">
+      <div>
+        <label for="name">Imię i nazwisko <span class="req">*</span></label>
+        <input id="name" name="name" required placeholder="Jan Kowalski" />
+      </div>
+      <div>
+        <label for="district">Dzielnica <span class="req">*</span></label>
+        <select id="district" name="district" required>
+          <option value="">Wybierz…</option>
+          <option>Wrzeszcz</option>
+          <option>Zaspa</option>
+          <option>Oliwa</option>
+          <option>Przymorze</option>
+          <option>Inna</option>
+        </select>
+      </div>
+      <div>
+        <label for="phone">Telefon <span class="req">*</span></label>
+        <input id="phone" name="phone" required placeholder="+48 600 000 000" />
+      </div>
+      <div>
+        <label for="email">E‑mail</label>
+        <input id="email" name="email" type="email" placeholder="twoj@email.pl" />
+      </div>
+      <div>
+        <label for="service">Usługa</label>
+        <select id="service" name="service">
+          <option>Standard – mieszkanie</option>
+          <option>Balkon Plus</option>
+          <option>Full / Po remoncie</option>
+        </select>
+      </div>
+      <div>
+        <label for="date">Preferowany termin</label>
+        <input id="date" name="date" type="date" />
+      </div>
+      <div class="full">
+        <label for="msg">Dodatkowe informacje</label>
+        <textarea id="msg" name="message" placeholder="Liczba okien / piętro / balkon itp."></textarea>
+      </div>
+      <!-- honeypot przeciw botom -->
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+      <div class="full">
+        <label class="help"><input type="checkbox" id="rodo" required> Wyrażam zgodę na kontakt w celu przygotowania wyceny i realizacji usługi. <span class="req">*</span></label>
+      </div>
+      <div class="full">
+        <button class="btn primary" type="submit" id="sendBtn">Wyślij zapytanie</button>
+        <div id="formAlert" class="alert" role="status">Dziękujemy! Odezwiemy się niebawem.</div>
+        <div id="formError" class="alert error" role="alert">Ups! Coś poszło nie tak. Spróbuj ponownie lub zadzwoń.</div>
+      </div>
+      <!-- ukryte pola pomocnicze -->
+      <input type="hidden" name="_subject" value="Nowe zapytanie – Czyste Okna Gdańsk" />
+      <input type="hidden" name="_language" value="pl" />
+    </div>
+  </form>
+  <p class="help">Pola oznaczone * są wymagane.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="section" id="kontakt">
+      <h2>Dane kontaktowe</h2>
+      <div class="grid cards">
+        <div class="card">
+          <h3>Obsługiwany obszar</h3>
+          <p>Gdańsk – Wrzeszcz, Zaspa, Oliwa i okolice</p>
+        </div>
+        <div class="card">
+          <h3>Godziny</h3>
+          <p>Pon–Sob: 8:00–18:00</p>
+        </div>
+        <div class="card">
+          <h3>Faktury / płatności</h3>
+          <p>Gotówka, karta, BLIK. Faktura na życzenie.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot wrap">
+      © <span id="year"></span> Czyste Okna Gdańsk • RODO: dane używane wyłącznie do kontaktu i realizacji usługi.
+    </div>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Podgląd zdjęcia">
+    <button class="btn close" aria-label="Zamknij" onclick="toggleLightbox(false)">Zamknij ✖</button>
+    <img alt="Podgląd" id="lightImg" />
+  </div>
+
+  <script>
+  // aktualny rok w stopce
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Lightbox
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightImg');
+  document.getElementById('galeria').addEventListener('click', (e)=>{
+    const img = e.target.closest('img');
+    if(!img) return;
+    lbImg.src = img.src;
+    toggleLightbox(true);
+  });
+  function toggleLightbox(show){ lb.classList.toggle('show', !!show) }
+  lb.addEventListener('click', (e)=>{ if(e.target===lb) toggleLightbox(false) });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') toggleLightbox(false) });
+
+  // Formularz – AJAX do Formspree (podmień YOUR_CODE na swój kod formularza)
+  const FORM_ENDPOINT = 'https://formspree.io/f/YOUR_CODE';
+  const form = document.getElementById('bookingForm');
+  const sendBtn = document.getElementById('sendBtn');
+  const ok = document.getElementById('formAlert');
+  const err = document.getElementById('formError');
+
+  form?.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    ok.style.display='none';
+    err.style.display='none';
+
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Wysyłanie…';
+
+    try{
+      const data = new FormData(form);
+      const res = await fetch(FORM_ENDPOINT, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
+      if(res.ok){
+        ok.style.display='block';
+        form.reset();
+      } else {
+        err.style.display='block';
+      }
+    }catch(_){ err.style.display='block'; }
+    finally{
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Wyślij zapytanie';
+    }
+  });
+</script>
+</body>
+</html>
