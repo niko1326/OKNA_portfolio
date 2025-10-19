@@ -2,7 +2,8 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- FIX: blokada „zoom strony” + właściwy viewport na mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Czyste Okna Gdańsk – Mycie okien i balkonów</title>
   <meta name="description" content="Profesjonalne mycie okien i balkonów w Gdańsku / Wrzeszczu. Zobacz portfolio przed/po i skontaktuj się, aby umówić termin." />
   <meta name="robots" content="index,follow" />
@@ -97,7 +98,14 @@
   .knob{position:absolute; top:50%; left:var(--pos,50%); transform:translate(-50%,-50%); width:36px; height:36px; border-radius:999px; background:color-mix(in oklab, var(--card) 80%, transparent); border:1px solid var(--line); box-shadow:var(--shadow); pointer-events:none}
 
   /* range input – pełnoekranowy, niewidoczny, do sterowania */
-  .compare input[type="range"]{position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:ew-resize; z-index:3}
+  .compare input[type="range"]{
+    position:absolute; inset:0; width:100%; height:100%;
+    margin:0; opacity:0; cursor:ew-resize; z-index:3;
+    /* FIX: dotyk nie przewija strony podczas przesuwania suwaka */
+    touch-action:none;
+  }
+  /* FIX: pozwól tylko pionowe przewijanie, poziome zachowaj dla slidera */
+  .compare-inner{touch-action:pan-y;}
 
   /* podpisy + badge */
   .badge{position:absolute; top:10px; left:10px; font-size:12px; line-height:1; padding:6px 10px; border-radius:999px; background:color-mix(in oklab, var(--card) 80%, transparent); border:1px solid var(--line); color:var(--fg); backdrop-filter:blur(6px); z-index:4}
@@ -118,14 +126,17 @@
 
   /* Mobile */
   @media (max-width:600px){
-    .wrap{padding:0 18px}
+    /* FIX: pełna szerokość + mniejsze wewnętrzne marginesy */
+    .wrap{max-width:100%; padding:0 12px}
     .nav{padding:12px 0}
     .brand .muted{display:none}
     .hero{padding:28px 0 20px}
     .cta .btn{flex:1;justify-content:center}
     .section{padding:28px 0}
     .cards{grid-template-columns:1fr}
-    .compare input[type="range"]{cursor:ew-resize}
+    /* FIX: slider edge-to-edge na mobile */
+    .compare{padding:14px; margin:0 -12px}
+    .compare-figure, .compare-inner{border-radius:0}
   }
   </style>
 
@@ -187,13 +198,15 @@
       <h2>Portfolio – przed / po</h2>
       <p class="muted">Przeciągnij pionowy pasek, aby zobaczyć różnicę. Na komputerze i telefonie działa dotyk/drag.</p>
 
-      <!-- PAIR 1: IMG_0317.jpeg (przed) / IMG_0321.jpeg (po) -->
+      <!-- PAIR 1: poprawny porządek – BEFORE (przed) nakładany na AFTER (po) -->
       <article class="compare">
         <figure class="compare-figure">
           <div class="compare-inner" style="--pos:50%">
+            <!-- obraz PO (tło) -->
             <img class="after" alt="Po – czyste okno po myciu, realizacja Gdańsk"
                  src="/img/realizacja1_przed.jpeg"
                  loading="lazy" decoding="async" />
+            <!-- obraz PRZED (nakładka) -->
             <img class="before" alt="Przed – zabrudzone okno, realizacja Gdańsk"
                  src="/img/realizacja1_po.jpeg"
                  loading="lazy" decoding="async" />
@@ -209,7 +222,7 @@
         </figure>
       </article>
 
-      <!-- PAIR 2: realizacja-2-przed.jpg / realizacja-2-po.jpg -->
+      <!-- PAIR 2 -->
       <article class="compare">
         <figure class="compare-figure">
           <div class="compare-inner" style="--pos:50%">
@@ -231,7 +244,7 @@
         </figure>
       </article>
 
-      <!-- Aby dodać kolejne: skopiuj <article class="compare"> i podmień src + opisy. -->
+      <!-- Dodawaj kolejne: skopiuj cały <article class="compare"> i podmień src + opisy -->
     </section>
 
     <section class="section" id="kontakt">
@@ -291,16 +304,13 @@
         const range = el.querySelector('input[type="range"]');
         const inner = el.querySelector('.compare-inner');
         function setPos(p){
-          // clamp 0..100 i ustaw jako %
           p = Math.max(0, Math.min(100, p));
           inner.style.setProperty('--pos', p + '%');
           range.value = p;
         }
-        // inicjalizacja z value
         setPos(parseFloat(range.value || '50'));
-        // standardowy input
         range.addEventListener('input', e => setPos(parseFloat(e.target.value)));
-        // drag/touch po całym obszarze
+
         const onMove = (clientX) => {
           const rect = inner.getBoundingClientRect();
           const rel = ((clientX - rect.left) / rect.width) * 100;
