@@ -2,7 +2,6 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <!-- FIX: blokada „zoom strony” + właściwy viewport na mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Czyste Okna Gdańsk – Mycie okien i balkonów</title>
   <meta name="description" content="Profesjonalne mycie okien i balkonów w Gdańsku / Wrzeszczu. Zobacz portfolio przed/po i skontaktuj się, aby umówić termin." />
@@ -18,34 +17,41 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
   :root{
-    /* LIGHT – neutral & natural */
-    --bg:#f6f6f4;          /* jasny papier */
-    --fg:#1f2328;          /* neutralny grafit */
-    --muted:#60646c;       /* przygaszona szarość */
-    --card:#ffffff;        /* karty */
-    --line:#e3e4e0;        /* delikatne linie */
-    --accent:#4a7c59;      /* sage green (akcent) */
-    --accent-2:#8c9a8e;    /* jaśniejsza zieleń – pomocniczo */
+    /* LIGHT – bazowe (gdy brak ręcznego wyboru i system = light) */
+    --bg:#f6f6f4;
+    --fg:#1f2328;
+    --muted:#60646c;
+    --card:#ffffff;
+    --line:#e3e4e0;
+    --accent:#4a7c59;
+    --accent-2:#8c9a8e;
     --radius:14px;
     --shadow:0 8px 24px rgba(0,0,0,.06);
   }
-
-  /* Dark mode – automatycznie wg systemu */
+  /* system ciemny (gdy brak ręcznego wyboru) */
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0f1210;        /* bardzo ciemny oliwkowy grafit */
-      --fg:#e7e7e4;        /* ciepła biel */
-      --muted:#a3a79f;     /* zgaszona oliwka */
+      --bg:#0f1210;
+      --fg:#e7e7e4;
+      --muted:#a3a79f;
       --card:#121614;
       --line:#202620;
-      --accent:#7ea68c;    /* rozjaśniony sage dla kontrastu */
+      --accent:#7ea68c;
       --accent-2:#98b4a0;
       --shadow:0 10px 30px rgba(0,0,0,.35);
     }
   }
-
-  :root, body[data-theme="light"]{color-scheme: light;}
-  body[data-theme="dark"]{color-scheme: dark;}
+  /* ręczne nadpisanie przez data-theme */
+  body[data-theme="light"]{
+    color-scheme: light;
+    --bg:#f6f6f4; --fg:#1f2328; --muted:#60646c; --card:#ffffff; --line:#e3e4e0;
+    --accent:#4a7c59; --accent-2:#8c9a8e; --shadow:0 8px 24px rgba(0,0,0,.06);
+  }
+  body[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#0f1210; --fg:#e7e7e4; --muted:#a3a79f; --card:#121614; --line:#202620;
+    --accent:#7ea68c; --accent-2:#98b4a0; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
 
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
@@ -62,6 +68,27 @@
   .brand .muted{font-size:13px;color:var(--muted)}
   nav .btn{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
   nav .btn + .btn{margin-left:8px}
+
+  /* Toggle (slider) */
+  .toggle{
+    --h:26px;
+    --w:48px;
+    --p:3px;
+    position:relative; display:inline-flex; align-items:center; gap:8px;
+  }
+  .toggle input{position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer}
+  .track{
+    width:var(--w); height:var(--h); border-radius:999px; background:color-mix(in oklab, var(--muted) 25%, transparent);
+    box-shadow:inset 0 0 0 1px var(--line);
+    position:relative; transition:background .25s ease;
+  }
+  .thumb{
+    position:absolute; top:var(--p); left:var(--p); width:calc(var(--h) - var(--p)*2); height:calc(var(--h) - var(--p)*2);
+    background:var(--card); border-radius:50%; box-shadow:var(--shadow); transition:transform .25s ease;
+  }
+  /* checked = dark */
+  .toggle[data-checked="true"] .track{background:var(--accent)}
+  .toggle[data-checked="true"] .thumb{transform:translateX(calc(var(--w) - var(--h)))}
 
   /* Hero */
   .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;padding:56px 0 36px;border-bottom:1px solid var(--line)}
@@ -84,7 +111,7 @@
   .grid{display:grid;gap:18px}
   .cards{grid-template-columns:repeat(3,1fr)}
 
-  /* BEFORE/AFTER – nowoczesny slider overlay */
+  /* BEFORE/AFTER – slider */
   .compare{padding:14px}
   .compare-figure{border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:var(--shadow);}
   .compare-inner{position:relative; width:100%; aspect-ratio:4/3; overflow:hidden; border-radius:12px;}
@@ -92,41 +119,32 @@
   .compare img.after{z-index:1}
   .compare img.before{z-index:2; clip-path: inset(0 calc(100% - var(--pos,50%)) 0 0);}
 
-  /* pionowy uchwyt */
   .handle{position:absolute; inset:0; pointer-events:none}
   .handle::before{content:""; position:absolute; top:0; bottom:0; left:var(--pos,50%); width:0; border-left:2px solid color-mix(in oklab, var(--fg) 35%, transparent); box-shadow:0 0 0 1px color-mix(in oklab, var(--card) 70%, transparent) inset}
   .knob{position:absolute; top:50%; left:var(--pos,50%); transform:translate(-50%,-50%); width:36px; height:36px; border-radius:999px; background:color-mix(in oklab, var(--card) 80%, transparent); border:1px solid var(--line); box-shadow:var(--shadow); pointer-events:none}
 
-  /* range input – pełnoekranowy, niewidoczny, do sterowania */
-  .compare input[type="range"]{
-    position:absolute; inset:0; width:100%; height:100%;
-    margin:0; opacity:0; cursor:ew-resize; z-index:3;
-    /* FIX: dotyk nie przewija strony podczas przesuwania suwaka */
-    touch-action:none;
-  }
-  /* FIX: pozwól tylko pionowe przewijanie, poziome zachowaj dla slidera */
+  .compare input[type="range"]{position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:ew-resize; z-index:3; touch-action:none;}
   .compare-inner{touch-action:pan-y;}
 
-  /* podpisy + badge */
   .badge{position:absolute; top:10px; left:10px; font-size:12px; line-height:1; padding:6px 10px; border-radius:999px; background:color-mix(in oklab, var(--card) 80%, transparent); border:1px solid var(--line); color:var(--fg); backdrop-filter:blur(6px); z-index:4}
   .badge.badge-after{left:auto; right:10px}
   .figcap{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); background:color-mix(in oklab, var(--bg) 96%, var(--card) 4%)}
 
-  /* Contact */
-  .contact-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-
-  /* Footer */
-  .foot{padding:24px 0;color:var(--muted);font-size:14px}
+  /* POSTER (plakat) – brak suwaka, zachowanie proporcji */
+  .compare.poster{padding:0}
+  .compare.poster .compare-figure{border:none; background:none; box-shadow:none; border-radius:0}
+  .compare.poster .compare-inner{
+    position:relative; width:100%; max-width:820px; margin:0 auto; overflow:visible; border-radius:12px; aspect-ratio:auto;
+  }
+  .compare.poster img{position:static; width:100%; height:auto; object-fit:contain; display:block; border-radius:12px;}
 
   /* Tablet */
   @media (max-width:920px){
     .hero{grid-template-columns:1fr;gap:18px}
     .cards{grid-template-columns:1fr 1fr}
   }
-
   /* Mobile */
   @media (max-width:600px){
-    /* FIX: pełna szerokość + mniejsze wewnętrzne marginesy */
     .wrap{max-width:100%; padding:0 12px}
     .nav{padding:12px 0}
     .brand .muted{display:none}
@@ -134,9 +152,10 @@
     .cta .btn{flex:1;justify-content:center}
     .section{padding:28px 0}
     .cards{grid-template-columns:1fr}
-    /* FIX: slider edge-to-edge na mobile */
     .compare{padding:14px; margin:0 -12px}
+    .compare.poster{margin:0; padding:0}
     .compare-figure, .compare-inner{border-radius:0}
+    .compare.poster .compare-inner{border-radius:0}
   }
   </style>
 
@@ -159,7 +178,7 @@
   <header>
     <div class="wrap nav">
       <div class="brand">
-        <div class="logo">OK</div>
+        <div class="logo"></div>
         <div>
           <strong>Czyste Okna Gdańsk</strong><br>
           <span class="muted">Mycie okien i balkonów</span>
@@ -168,7 +187,12 @@
       <nav>
         <a class="btn ghost" href="#portfolio">Portfolio</a>
         <a class="btn ghost" href="#kontakt">Kontakt</a>
-        <button class="btn ghost" id="themeToggle" type="button" aria-label="Przełącz motyw">Motyw</button>
+
+        <!-- Suwak motywu -->
+        <label class="toggle" id="themeToggle" aria-label="Przełącz motyw (jasny/ciemny)">
+          <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+          <input type="checkbox" aria-hidden="true" />
+        </label>
       </nav>
     </div>
   </header>
@@ -198,18 +222,14 @@
       <h2>Portfolio – przed / po</h2>
       <p class="muted">Przeciągnij pionowy pasek, aby zobaczyć różnicę. Na komputerze i telefonie działa dotyk/drag.</p>
 
-      <!-- PAIR 1: poprawny porządek – BEFORE (przed) nakładany na AFTER (po) -->
+      <!-- PAIR 1 -->
       <article class="compare">
         <figure class="compare-figure">
           <div class="compare-inner" style="--pos:50%">
-            <!-- obraz PO (tło) -->
             <img class="after" alt="Po – czyste okno po myciu, realizacja Gdańsk"
-                 src="/img/realizacja1_przed.jpeg"
-                 loading="lazy" decoding="async" />
-            <!-- obraz PRZED (nakładka) -->
+                 src="/img/realizacja1_przed.jpeg" loading="lazy" decoding="async" />
             <img class="before" alt="Przed – zabrudzone okno, realizacja Gdańsk"
-                 src="/img/realizacja1_po.jpeg"
-                 loading="lazy" decoding="async" />
+                 src="/img/realizacja1_po.jpeg" loading="lazy" decoding="async" />
             <span class="badge">Przed</span>
             <span class="badge badge-after">Po</span>
             <div class="handle" aria-hidden="true"></div>
@@ -222,29 +242,18 @@
         </figure>
       </article>
 
-      <!-- PAIR 2 -->
-      <article class="compare">
+      <!-- PAIR 2: plakat -->
+      <article class="compare poster">
         <figure class="compare-figure">
-          <div class="compare-inner" style="--pos:50%">
-            <img class="after" alt="Po – balkon po myciu, Wrzeszcz"
-                 src="/img/realizacja-2-po.jpg"
-                 loading="lazy" decoding="async" />
-            <img class="before" alt="Przed – balkon przed myciem, Wrzeszcz"
-                 src="/img/realizacja-2-przed.jpg"
-                 loading="lazy" decoding="async" />
-            <span class="badge">Przed</span>
-            <span class="badge badge-after">Po</span>
-            <div class="handle" aria-hidden="true"></div>
-            <input type="range" min="0" max="100" value="50" aria-label="Porównanie przed/po" />
+          <div class="compare-inner">
+            <img src="/img/plakat.jpg" alt="Plakat – Studenci Myją Okna" loading="lazy" decoding="async" />
           </div>
           <figcaption class="figcap">
-            <span>Balkon • Wrzeszcz</span>
-            <span>balustrada + podłoga</span>
+            <span>Plakat promocyjny</span>
+            <span>Studenci Myją Okna</span>
           </figcaption>
         </figure>
       </article>
-
-      <!-- Dodawaj kolejne: skopiuj cały <article class="compare"> i podmień src + opisy -->
     </section>
 
     <section class="section" id="kontakt">
@@ -274,47 +283,59 @@
   </main>
 
   <script>
-    // aktualny rok w stopce
+    // rok
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // przełącznik motywu (opcjonalny)
+    // motyw: domyślnie system; klik = przeciwieństwo aktualnego
     (function(){
-      const key = 'site-theme';
+      const key  = 'site-theme';
       const root = document.body;
-      const btn = document.getElementById('themeToggle');
+      const wrap = document.getElementById('themeToggle');
+      const input = wrap && wrap.querySelector('input');
+
+      // Przywróć zapisany wybór (jeśli był)
       const saved = localStorage.getItem(key);
       if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
-      function label(){
-        const t = root.getAttribute('data-theme');
-        btn.textContent = t === 'dark' ? 'Motyw: Ciemny' : (t === 'light' ? 'Motyw: Jasny' : 'Motyw');
+
+      // Ustal efektywny motyw (manualny lub systemowy)
+      function effectiveTheme(){
+        const manual = root.getAttribute('data-theme');
+        if (manual === 'light' || manual === 'dark') return manual;
+        return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
-      btn && label();
-      btn && btn.addEventListener('click', () => {
-        const current = root.getAttribute('data-theme');
-        const next = current === 'dark' ? 'light' : (current === 'light' ? null : 'dark');
-        if (next) root.setAttribute('data-theme', next); else root.removeAttribute('data-theme');
-        if (next) localStorage.setItem(key, next); else localStorage.removeItem(key);
-        label();
+
+      // Ustaw stan suwaka: checked = dark
+      function reflect(){
+        const isDark = effectiveTheme() === 'dark';
+        wrap?.setAttribute('data-checked', String(isDark));
+        if (input) input.checked = isDark;
+      }
+      reflect();
+      matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', reflect);
+
+      // Klik = ustaw przeciwny do aktualnego i zapisz
+      input && input.addEventListener('click', (e)=>{
+        e.preventDefault(); // sterujemy ręcznie
+        const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem(key, next);
+        reflect();
       });
     })();
 
-    // Nowoczesny slider porównania (drag + touch). Działa dla wielu elementów .compare.
+    // slider porównania
     (function(){
       function attach(el){
         const range = el.querySelector('input[type="range"]');
         const inner = el.querySelector('.compare-inner');
-        function setPos(p){
-          p = Math.max(0, Math.min(100, p));
-          inner.style.setProperty('--pos', p + '%');
-          range.value = p;
-        }
+        if (!range || !inner) return; // brak suwaka (np. plakat)
+        function setPos(p){ p = Math.max(0, Math.min(100, p)); inner.style.setProperty('--pos', p + '%'); range.value = p; }
         setPos(parseFloat(range.value || '50'));
         range.addEventListener('input', e => setPos(parseFloat(e.target.value)));
 
         const onMove = (clientX) => {
           const rect = inner.getBoundingClientRect();
-          const rel = ((clientX - rect.left) / rect.width) * 100;
-          setPos(rel);
+          setPos(((clientX - rect.left) / rect.width) * 100);
         };
         let dragging = false;
         inner.addEventListener('pointerdown', (e)=>{ dragging = true; inner.setPointerCapture(e.pointerId); onMove(e.clientX); });
