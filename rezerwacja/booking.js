@@ -4,17 +4,17 @@
     if (!API) {
         console.warn('BK_API_BASE nie jest ustawione');
     }
-
     // ========= ELEMENTY =========
-    const $grid = document.getElementById('bk-grid');
-    const $form = document.getElementById('bookingForm');
+    const $grid  = document.getElementById('bk-grid');
+    const $form  = document.getElementById('bookingForm');
     const $status = document.getElementById('bk-status');
-    const $hint = document.getElementById('bk-hint');
-    const $offer = document.getElementById('bk-offer');
-    const $refresh = document.getElementById('bk-refresh');
-    const $prev = document.getElementById('bk-prev');
-    const $next = document.getElementById('bk-next');
-    const $title = document.getElementById('bk-title');
+    const $hint   = document.getElementById('bk-hint');
+    const $offer  = document.getElementById('bk-offer');
+    const $prev   = document.getElementById('bk-prev');
+    const $next   = document.getElementById('bk-next');
+    const $title  = document.getElementById('bk-title');
+    const $refresh = document.getElementById('bk-refresh'); // <— DODANE (jeśli masz taki element)
+
 
 
     // ========= STAN =========
@@ -34,6 +34,80 @@
 
 
     // ========= UTILS =========
+
+    // Live format telefonu z użyciem onlyDigits / formatDisplay / isValidPhone
+    function attachPhoneFormatting(){
+    const $prefix = document.getElementById('bk-prefix');
+    const $phone  = document.getElementById('bk-phone');
+    if(!$prefix || !$phone) return;
+
+    // placeholder pod PL/inne
+    function updatePlaceholder(){
+        $phone.placeholder = ($prefix.value === '+48') ? '123 123 123' : 'wpisz numer';
+    }
+
+    // ile cyfr jest przed kursorem
+    function digitsBeforeCaret(input){
+        const pos = input.selectionStart || 0;
+        let count = 0;
+        for (let i=0;i<pos;i++) if (/\d/.test(input.value[i])) count++;
+        return count;
+    }
+
+    // ustaw kursor po N-tej cyfrze w sformatowanym stringu
+    function setCaretByDigitIndex(input, digitIndex, formatted){
+        if (digitIndex <= 0){
+        input.value = formatted;
+        input.setSelectionRange(0,0);
+        return;
+        }
+        let seen = 0, pos = formatted.length;
+        for (let i=0;i<formatted.length;i++){
+        if (/\d/.test(formatted[i])) seen++;
+        if (seen === digitIndex){ pos = i+1; break; }
+        }
+        input.value = formatted;
+        input.setSelectionRange(pos, pos);
+    }
+
+    // właściwe formatowanie na żywo
+    function reformatPreservingCaret(){
+        const before = digitsBeforeCaret($phone);          // liczba cyfr przed kursorem
+        const raw    = onlyDigits($phone.value);           // -> helper
+        const fmt    = formatDisplay($prefix.value, raw);  // -> helper
+        setCaretByDigitIndex($phone, Math.min(before, raw.length), fmt);
+    }
+
+    // podpięcie eventów
+    $phone.addEventListener('input', reformatPreservingCaret);
+    $phone.addEventListener('blur',  reformatPreservingCaret);
+    $phone.addEventListener('paste', () => setTimeout(reformatPreservingCaret)); // po wklejeniu
+    $prefix.addEventListener('change', () => { updatePlaceholder(); reformatPreservingCaret(); });
+
+    // start
+    updatePlaceholder();
+    reformatPreservingCaret();
+    }
+
+
+    function onlyDigits(s){ return (s||'').replace(/\D+/g,''); }
+
+    function formatDisplay(prefix, rawDigits){
+    // PL: 9 cyfr → 3-3-3, inne: grupy po 3
+    if (prefix === '+48'){
+        const d = rawDigits.slice(0,9);
+        return d.replace(/(\d{3})(\d{0,3})(\d{0,3}).*/, (_,a,b,c)=> [a,b,c].filter(Boolean).join(' '));
+    }
+    // ogólnie: do 15 cyfr, grupy 3-3-3-...
+    const d = rawDigits.slice(0,15);
+    return d.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g,'$& ').trim();
+    }
+
+    function isValidPhone(prefix, rawDigits){
+    if (prefix === '+48') return rawDigits.length === 9;
+    return rawDigits.length >= 7 && rawDigits.length <= 15; // E.164
+    }
+
     function rangeHours(start=7, end=18, step=DEFAULT_BLOCK_MIN){
   const out = [];
   for(let m=start*60; m <= (end*60 - step); m+=step){
@@ -185,6 +259,51 @@ function setLoading(on){
     const endHour = parseInt(end.split(':')[0], 10);
     return `${startHour}–${endHour}`;
     }
+    function cmpHHMM(a,b){ return a===b ? 0 : (a<b ? -1 : 1); }
+    function nextHHMM(hhmm, stepMin=60){
+    const [H,M] = hhmm.split(':').map(Number);
+    const d = new Date(2000,0,1,H,M,0,0);
+    d.setMinutes(d.getMinutes()+stepMin);
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+    /** Zwraca pełną listę slotów od start do end włącznie, skok = blockMinutes */
+    function rangeHHMM(start, end, stepMin){
+    const out = [];
+    let t = start;
+    while (cmpHHMM(t, end) <= 0){
+        out.push(t);
+        t = nextHHMM(t, stepMin);
+    }
+    return out;
+    }
+
+    function repaintAll(tbl){
+    const buttons = tbl.querySelectorAll('button[data-date][data-time]');
+    const sorted = selection.date ? [...selection.times].sort(cmpHHMM) : [];
+    const left  = sorted[0];
+    const right = sorted[sorted.length-1];
+
+    buttons.forEach(btn=>{
+        const date = btn.getAttribute('data-date');
+        const time = btn.getAttribute('data-time');
+
+        const day  = weekData.find(d=>d.date===date);
+        const slot = day?.slots.find(s=>s.time===time);
+        const avail = !!(slot && slot.available && !isPast(date, time));
+
+        const sel   = selection.date===date && selection.times.includes(time);
+        const middle = sel && sorted.length>1 && time!==left && time!==right;
+
+        // styl + (un)clickable
+        btn.disabled = !avail || middle;
+        btn.style.cursor = (!avail || middle) ? 'not-allowed' : 'pointer';
+        btn.style.background = avail ? 'var(--card)' : 'var(--line)';
+        btn.style.color = avail ? 'inherit' : 'var(--muted)';
+        btn.style.outline = sel ? '2px solid var(--accent)' : 'none';
+    });
+    }
+
+    
 
     // ========= RENDER =========
     function renderWeek() {
@@ -212,6 +331,11 @@ function setLoading(on){
             h.style.border = '1px solid var(--line)';
             h.style.background = 'var(--card)';
             h.innerHTML = `${wkdays[i]}<br>${fmtDDMM(d.date)}`;
+            // 🔴 highlight "today"
+            if (d.date === todayISO()) {
+                h.style.borderColor = '#e5484d';    // red border (optional)
+                h.style.fontWeight = '800';         // a bit bolder (optional)
+            }
             tbl.appendChild(h);
         }
 
@@ -228,7 +352,8 @@ function setLoading(on){
                 btn.type = 'button';
                 btn.textContent = rangeLabel(hhmm); // "08:00–09:00"
                 btn.title = `${day.date} ${hhmm}`;
-
+                btn.setAttribute('data-date', day.date);
+                btn.setAttribute('data-time', hhmm);       
                 // WYGLĄD: jedna linia, środek, większy „klik”
                 Object.assign(btn.style, {
                     border: '1px solid var(--line)',
@@ -255,37 +380,77 @@ function setLoading(on){
                 };
                 paint();
 
-                if (available) {
-                    btn.addEventListener('click', () => {
-                        // wybór tylko w obrębie jednego dnia
-                        if (selection.date && selection.date !== day.date) {
-                            selection = {
-                                date: day.date,
-                                times: [hhmm]
-                            };
-                        } else {
-                            selection.date = day.date;
-                            const idx = selection.times.indexOf(hhmm);
-                            if (idx >= 0) selection.times.splice(idx, 1);
-                            else selection.times.push(hhmm);
+                if (available){
+                btn.addEventListener('click', () => {
+                // wybór tylko w obrębie jednego dnia
+                if (selection.date && selection.date !== day.date) {
+                    selection = { date: day.date, times: [hhmm] };
+                } else {
+                    selection.date = day.date;
+
+                    const already = selection.times.includes(hhmm);
+                    if (already) {
+                    // pozwalamy odznaczać WYŁĄCZNIE skrajne elementy
+                    const sorted = [...selection.times].sort(cmpHHMM);
+                    const left  = sorted[0];
+                    const right = sorted[sorted.length-1];
+
+                    if (sorted.length === 1) {
+                        selection.times = [];
+                    } else if (hhmm === left) {
+                        selection.times = sorted.slice(1);
+                    } else if (hhmm === right) {
+                        selection.times = sorted.slice(0, -1);
+                    } else {
+                        // środek – nic nie robimy (będzie disabled przez repaintAll)
+                        return;
+                    }
+                    } else {
+                    // dodawanie – rozszerz do pełnego CIĄGŁEGO zakresu
+                    if (selection.times.length === 0) {
+                        selection.times = [hhmm];
+                    } else {
+                        const sorted = [...selection.times].sort(cmpHHMM);
+                        const leftCandidate  = cmpHHMM(hhmm, sorted[0]) < 0 ? hhmm : sorted[0];
+                        const rightCandidate = cmpHHMM(hhmm, sorted[sorted.length-1]) > 0 ? hhmm : sorted[sorted.length-1];
+
+                        const full = rangeHHMM(leftCandidate, rightCandidate, blockMinutes);
+
+                        // sprawdź, czy po drodze wszystkie są dostępne
+                        const isTimeAvail = (t) => {
+                        const s = day.slots.find(x => x.time === t);
+                        return !!(s && s.available && !isPast(day.date, t));
+                        };
+                        if (!full.every(isTimeAvail)) {
+                        // zakres zderza się z zajętym slotem – nic nie zmieniamy
+                        return;
                         }
-                        if (requiredBlocks && selection.times.length > requiredBlocks) {
-                            selection.times.sort();
-                            selection.times = selection.times.slice(-requiredBlocks);
-                        }
-                        // odśwież zaznaczenie
-                        [...tbl.querySelectorAll('button')].forEach(b => b.style.outline = 'none');
-                        for (const t of selection.times) {
-                            const q = `button[title="${selection.date} ${t}"]`;
-                            const el = tbl.querySelector(q);
-                            if (el) el.style.outline = '2px solid var(--accent)';
-                        }
-                    });
+                        selection.times = full;
+                    }
+                    }
+
+                    // jeśli wymagane bloki – przytnij do żądanej długości, zostawiając zakres
+                    if (requiredBlocks && selection.times.length > requiredBlocks) {
+                    const sorted = [...selection.times].sort(cmpHHMM);
+                    // heurystyka: przycinamy od tej strony, gdzie kliknięto dalej
+                    if (cmpHHMM(hhmm, sorted[Math.floor(sorted.length/2)]) >= 0) {
+                        selection.times = sorted.slice(-requiredBlocks);
+                    } else {
+                        selection.times = sorted.slice(0, requiredBlocks);
+                    }
+                    }
+                }
+
+                // odśwież wygląd całej siatki (blokuje środek)
+                repaintAll(tbl);
+                });
+
                 }
 
                 tbl.appendChild(btn);
             }
         }
+        repaintAll(tbl);
         $grid.appendChild(tbl);
     }
 
@@ -344,8 +509,6 @@ async function fetchWeek(startISO, { preferCache = true } = {}) {
 
     const hints = [];
     if (requiredBlocks) hints.push(`wymagane: ${requiredBlocks} blok(i)`);
-    hints.push(`blok: ${blockMinutes} min`);
-    $hint.textContent = hints.join(' • ');
     $offer.textContent = requiredBlocks ? `Oferta: ${requiredBlocks}×${blockMinutes} min` : 'Standardowe bloki';
 
     renderWeek();
@@ -400,9 +563,28 @@ async function fetchWeek(startISO, { preferCache = true } = {}) {
         const chosen = [...selection.times].sort();
 
         const name = document.getElementById('bk-name').value.trim();
-        const phone = document.getElementById('bk-phone').value.trim();
+        const prefix = document.getElementById('bk-prefix').value;
+        const phoneDisplay = document.getElementById('bk-phone').value;
+        const phoneRaw = onlyDigits(phoneDisplay);
+        const email = document.getElementById('bk-email').value.trim();
         const address = document.getElementById('bk-address').value.trim();
         const notes = document.getElementById('bk-notes').value.trim();
+
+
+        if (!isValidPhone(prefix, phoneRaw)){
+        setStatus(prefix === '+48'
+            ? 'Numer telefonu musi mieć 9 cyfr (format: 123 123 123).'
+            : 'Numer telefonu powinien mieć od 7 do 15 cyfr.');
+        return;
+        }
+
+        // prosta walidacja e-mail
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setStatus('Podaj poprawny adres e-mail.');
+        return;
+        }
+
+        const phoneE164 = prefix + phoneRaw; // np. +48123123123
 
         if (!date || chosen.length === 0) {
             setStatus('Zaznacz bloki w jednym dniu.');
@@ -423,7 +605,8 @@ async function fetchWeek(startISO, { preferCache = true } = {}) {
                 action: 'book',
                 date,
                 name,
-                phone,
+                phone: phoneE164,
+                email,
                 address,
                 notes,
                 blocks: JSON.stringify(chosen)
@@ -434,25 +617,24 @@ async function fetchWeek(startISO, { preferCache = true } = {}) {
                 body.set('sig', urlp.get('sig'));
             }
             const res = await fetch(API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                },
-                body
+            method: 'POST',
+            body
             });
+
             const data = await res.json();
             if (data.ok) {
-            setStatus('Zgłoszenie przyjęte!');
-            $form.reset();
-            selection = { date:null, times:[] };
+            // zapisz pakiet do sessionStorage (widoczny po przejściu na /)
+            sessionStorage.setItem('booking_success', JSON.stringify({
+                date,
+                times: chosen,             // np. ["12:00","13:00"]
+                bmin: blockMinutes,        // długość bloku (żeby poprawnie policzyć koniec)
+                name
+            }));
 
-            // odśwież tylko aktualny tydzień; cache usuwamy, żeby przyszły świeże dane
-            weekCache.delete(currentWeekStart);
-            fetchWeek(currentWeekStart, { preferCache: false });
-            } else {
-            setStatus(data.message || 'Nie udało się zarezerwować.');
+            // przekieruj na stronę główną
+            window.location.href = '/';
+            return; // nic więcej
             }
-
 
         } catch (err) {
             console.error(err);
@@ -478,5 +660,6 @@ async function fetchWeek(startISO, { preferCache = true } = {}) {
 
         $refresh?.addEventListener('click', () => fetchWeek(currentWeekStart));
         $form?.addEventListener('submit', submitBooking);
+        attachPhoneFormatting();
     })();
 })();

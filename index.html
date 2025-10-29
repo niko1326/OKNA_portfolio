@@ -157,6 +157,17 @@
     .compare-figure, .compare-inner{border-radius:0}
     .compare.poster .compare-inner{border-radius:0}
   }
+  #bk-modal{position:fixed;inset:0;z-index:9999}
+  #bk-modal[hidden]{display:none}
+  #bk-modal .bk-backdrop{
+    position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
+  }
+  #bk-modal .bk-card{
+    position:relative;max-width:520px;margin:12vh auto 0;
+    background:var(--card);color:var(--fg);
+    border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+    padding:18px;
+  }
   </style>
 
   <script type="application/ld+json">
@@ -282,8 +293,20 @@
     </div>
   </main>
 
+  <!-- Modal rezerwacji -->
+  <div id="bk-modal" hidden>
+    <div class="bk-backdrop"></div>
+    <div class="bk-card" role="dialog" aria-labelledby="bk-modal-title" aria-modal="true">
+      <h3 id="bk-modal-title" style="margin:0 0 8px">Rezerwacja przyjęta 🎉</h3>
+      <p id="bk-modal-text" style="margin:0 0 14px"></p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="bk-modal-ok" class="btn primary">OK</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // rok
+    // rok w stopce
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // motyw: domyślnie system; klik = przeciwieństwo aktualnego
@@ -293,18 +316,15 @@
       const wrap = document.getElementById('themeToggle');
       const input = wrap && wrap.querySelector('input');
 
-      // Przywróć zapisany wybór (jeśli był)
       const saved = localStorage.getItem(key);
       if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
 
-      // Ustal efektywny motyw (manualny lub systemowy)
       function effectiveTheme(){
         const manual = root.getAttribute('data-theme');
         if (manual === 'light' || manual === 'dark') return manual;
         return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
 
-      // Ustaw stan suwaka: checked = dark
       function reflect(){
         const isDark = effectiveTheme() === 'dark';
         wrap?.setAttribute('data-checked', String(isDark));
@@ -313,9 +333,8 @@
       reflect();
       matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', reflect);
 
-      // Klik = ustaw przeciwny do aktualnego i zapisz
       input && input.addEventListener('click', (e)=>{
-        e.preventDefault(); // sterujemy ręcznie
+        e.preventDefault();
         const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
         root.setAttribute('data-theme', next);
         localStorage.setItem(key, next);
@@ -328,7 +347,7 @@
       function attach(el){
         const range = el.querySelector('input[type="range"]');
         const inner = el.querySelector('.compare-inner');
-        if (!range || !inner) return; // brak suwaka (np. plakat)
+        if (!range || !inner) return;
         function setPos(p){ p = Math.max(0, Math.min(100, p)); inner.style.setProperty('--pos', p + '%'); range.value = p; }
         setPos(parseFloat(range.value || '50'));
         range.addEventListener('input', e => setPos(parseFloat(e.target.value)));
@@ -345,6 +364,53 @@
       }
       document.querySelectorAll('.compare').forEach(attach);
     })();
+
+    // modal po rezerwacji (z /rezerwacja)
+    (function(){
+      function fmtPL(iso){
+        return `${iso.slice(8,10)}.${iso.slice(5,7)}.${iso.slice(0,4)}`;
+      }
+      function addMin(hhmm, mins){
+        const [H,M] = hhmm.split(':').map(Number);
+        const d = new Date(2000,0,1,H,M,0,0);
+        d.setMinutes(d.getMinutes()+mins);
+        return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      }
+
+      const raw = sessionStorage.getItem('booking_success');
+      if(!raw) return;
+      sessionStorage.removeItem('booking_success');
+
+      let payload = null;
+      try { payload = JSON.parse(raw); } catch(_){}
+
+      const modal = document.getElementById('bk-modal');
+      const txt   = document.getElementById('bk-modal-text');
+      const okBtn = document.getElementById('bk-modal-ok');
+
+      if(!modal || !txt || !okBtn) return;
+
+      // komunikat
+      if(payload && payload.date && Array.isArray(payload.times) && payload.times.length){
+        const start = payload.times[0];
+        const end   = addMin(payload.times[payload.times.length-1], payload.bmin || 60);
+        const name  = payload.name ? `, ${payload.name}` : '';
+        txt.textContent = `Dziękujemy${name}! Zgłoszenie na ${fmtPL(payload.date)} w godzinach ${start}–${end} zostało przyjęte. Skontaktujemy się, aby potwierdzić termin.`;
+      } else {
+        txt.textContent = 'Dziękujemy! Twoje zgłoszenie zostało przyjęte. Skontaktujemy się wkrótce.';
+      }
+
+      // pokaż modal
+      modal.hidden = false;
+
+      // zamykanie
+      function close(){ modal.hidden = true; }
+      okBtn.addEventListener('click', close);
+      modal.querySelector('.bk-backdrop').addEventListener('click', close);
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); }, {once:true});
+    })();
   </script>
+
+
 </body>
 </html>
