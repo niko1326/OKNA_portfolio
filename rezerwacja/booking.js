@@ -127,8 +127,8 @@ function setLoading(on){
         return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
     }
 
-    function fmtDDMM(iso) { // "YYYY-MM-DD" -> "DD-MM"
-        return iso.slice(8, 10) + "-" + iso.slice(5, 7);
+    function fmtDDMM(iso){ // "YYYY-MM-DD" -> "DD.MM"
+    return iso.slice(8,10) + "." + iso.slice(5,7);
     }
 
     function startOfWeekISO(dateStr) {
