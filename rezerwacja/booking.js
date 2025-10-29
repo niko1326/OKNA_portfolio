@@ -28,6 +28,9 @@
     const off = d.getTimezoneOffset();
     return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
   }
+  function fmtDDMM(iso){ // "YYYY-MM-DD" -> "DD-MM"
+    return iso.slice(8,10) + "-" + iso.slice(5,7);
+  }
   function startOfWeekISO(dateStr){
     const d = new Date(dateStr + 'T00:00:00');
     // poniedziałek jako 1… niedziela 0 → dostosuj do poniedziałku
@@ -67,56 +70,63 @@
   }
 
   // ========= RENDER =========
-  function renderWeek(){
-    // zbuduj tabelę 7 kolumn (Pn-Nd), w wierszach godziny
+    function renderWeek(){
     $grid.innerHTML = '';
     if(!weekData.length){ $grid.textContent = 'Brak danych'; return; }
 
-    // ustal listę godzin z pierwszego dnia
     const hours = weekData[0].slots.map(s => s.time);
 
     const tbl = document.createElement('div');
     tbl.style.display = 'grid';
-    tbl.style.gridTemplateColumns = 'repeat(8, 1fr)'; // 1 kolumna na etykiety godzin + 7 dni
-    tbl.style.gap = '6px';
+    tbl.style.gridTemplateColumns = 'repeat(7, 1fr)';         // 7 kolumn – bez lewej etykiety
+    tbl.style.gap = '8px';
 
-    // nagłówek
-    const headEmpty = document.createElement('div'); tbl.appendChild(headEmpty);
+    // nagłówek (7 komórek)
     for(let i=0;i<7;i++){
-      const d = weekData[i];
-      const h = document.createElement('div');
-      h.style.fontWeight = '600';
-      h.style.textAlign = 'center';
-      const label = `${wkdays[i]}\n${d.date.slice(5)}`;
-      h.innerHTML = label.replace('\n','<br>');
-      tbl.appendChild(h);
+        const d = weekData[i];
+        const h = document.createElement('div');
+        h.style.fontWeight = '700';
+        h.style.textAlign = 'center';
+        h.style.padding = '6px 4px';
+        h.style.borderRadius = '10px';
+        h.style.border = '1px solid var(--line)';
+        h.style.background = 'var(--card)';
+        h.innerHTML = `${wkdays[i]}<br>${fmtDDMM(d.date)}`;
+        tbl.appendChild(h);
     }
 
-    // wiersze godzin
+    // rzędy godzin (po 7 komórek na wiersz)
     for(const hhmm of hours){
-      const hourCell = document.createElement('div');
-      hourCell.style.fontWeight = '600';
-      hourCell.textContent = rangeLabel(hhmm);
-      tbl.appendChild(hourCell);
-
-      for(let dayIdx=0; dayIdx<7; dayIdx++){
+        for(let dayIdx=0; dayIdx<7; dayIdx++){
         const day = weekData[dayIdx];
         const slot = day.slots.find(s => s.time === hhmm);
 
-        // uwzględnij przeszłość: wszystko, co już minęło, jest niedostępne
+        // niedostępne, jeśli zajęte albo przeszłe
         const available = slot && slot.available && !isPast(day.date, hhmm);
 
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.textContent = rangeLabel(hhmm);
+        btn.textContent = rangeLabel(hhmm);                   // "08:00–09:00"
         btn.title = `${day.date} ${hhmm}`;
-        btn.style.border = '1px solid var(--line)';
-        btn.style.borderRadius = '10px';
-        btn.style.padding = '10px';
-        btn.style.minHeight = '42px';
-        btn.style.background = available ? 'var(--card)' : 'var(--line)';
-        btn.style.color = available ? 'inherit' : 'var(--muted)';
-        btn.style.cursor = available ? 'pointer' : 'not-allowed';
+
+        // WYGLĄD: jedna linia, środek, większy „klik”
+        Object.assign(btn.style, {
+            border: '1px solid var(--line)',
+            borderRadius: '12px',
+            padding: '12px 10px',
+            minHeight: '44px',
+            background: available ? 'var(--card)' : 'var(--line)',
+            color: available ? 'inherit' : 'var(--muted)',
+            cursor: available ? 'pointer' : 'not-allowed',
+            whiteSpace: 'nowrap',        // NIE ZAWIJAJ
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: '600'
+        });
+
         if(!available) btn.disabled = true;
 
         const selected = () => selection.date === day.date && selection.times.includes(hhmm);
@@ -124,35 +134,34 @@
         paint();
 
         if(available){
-          btn.addEventListener('click', () => {
+            btn.addEventListener('click', () => {
             // wybór tylko w obrębie jednego dnia
             if(selection.date && selection.date !== day.date){
-              selection = { date: day.date, times: [hhmm] };
+                selection = { date: day.date, times: [hhmm] };
             } else {
-              selection.date = day.date;
-              const idx = selection.times.indexOf(hhmm);
-              if(idx >= 0) selection.times.splice(idx,1); else selection.times.push(hhmm);
+                selection.date = day.date;
+                const idx = selection.times.indexOf(hhmm);
+                if(idx >= 0) selection.times.splice(idx,1); else selection.times.push(hhmm);
             }
-            // wymuś limit liczby bloków
             if(requiredBlocks && selection.times.length > requiredBlocks){
-              selection.times.sort();
-              selection.times = selection.times.slice(-requiredBlocks);
+                selection.times.sort();
+                selection.times = selection.times.slice(-requiredBlocks);
             }
-            // podświetl i odśwież wszystkie przyciski
+            // odśwież zaznaczenie
             [...tbl.querySelectorAll('button')].forEach(b => b.style.outline = 'none');
             for(const t of selection.times){
-              const q = `button[title="${selection.date} ${t}"]`;
-              const el = tbl.querySelector(q); if(el) el.style.outline = '2px solid var(--accent)';
+                const q = `button[title="${selection.date} ${t}"]`;
+                const el = tbl.querySelector(q); if(el) el.style.outline = '2px solid var(--accent)';
             }
-          });
+            });
         }
 
         tbl.appendChild(btn);
-      }
+        }
+    }
+    $grid.appendChild(tbl);
     }
 
-    $grid.appendChild(tbl);
-  }
 
   // ========= API =========
   async function fetchWeek(startISO){
