@@ -1,0 +1,95 @@
+<!--
+Folder struktura w repo:
+/rezerwacja/index.html
+/rezerwacja/booking.js
+
+Ta strona działa niezależnie od strony głównej. Wystarczy wrzucić folder /rezerwacja do repo (GitHub Pages) i działa pod /rezerwacja.
+-->
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Umów termin – Czyste Okna</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f6f6f4;--fg:#1f2328;--muted:#60646c;--card:#ffffff;--line:#e3e4e0;--accent:#4a7c59;--radius:14px;--shadow:0 8px 24px rgba(0,0,0,.06)}
+    @media (prefers-color-scheme: dark){:root{--bg:#0f1210;--fg:#e7e7e4;--muted:#a3a79f;--card:#121614;--line:#202620;--accent:#7ea68c;--shadow:0 10px 30px rgba(0,0,0,.35)}}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline;text-underline-offset:2px}
+    .wrap{max-width:760px;margin:0 auto;padding:20px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    h1{font-size:clamp(22px,4vw,32px);margin:0 0 12px}
+    .muted{color:var(--muted)}
+    .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    input, select, textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg)}
+    button.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--accent);color:#fff;font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    label.block{display:block}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted);font-size:12px}
+    .status{margin-left:10px}
+    @media(max-width:640px){.row{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="topbar">
+      <a href="/" class="badge">← Powrót na stronę główną</a>
+      <span class="badge" id="bk-offer"></span>
+    </div>
+
+    <h1>Umów termin</h1>
+    <p class="muted">Wybierz dzień i dostępne bloki godzinowe. Link może wymagać wyboru określonej liczby bloków.</p>
+
+    <div class="card">
+      <form id="bookingForm">
+        <div class="row">
+            <label class="block" style="grid-column:1/-1">
+                <span>Tydzień (Pn–Nd) • kliknij dostępne bloki</span>
+                    <div id="bk-grid" class="grid"></div>
+                <small id="bk-hint" class="muted"></small>
+            </label>
+        </div>
+
+
+        <div class="row">
+          <label class="block">
+            <span>Imię</span>
+            <input id="bk-name" type="text" required placeholder="np. Kasia">
+          </label>
+          <label class="block">
+            <span>Telefon</span>
+            <input id="bk-phone" type="tel" required placeholder="735 400 610">
+          </label>
+        </div>
+
+        <label class="block" style="margin-top:8px">
+          <span>Adres (dzielnica + ulica)</span>
+          <input id="bk-address" type="text" required placeholder="Gdańsk, Wrzeszcz – ul. …">
+        </label>
+
+        <label class="block" style="margin-top:8px">
+          <span>Uwagi (np. balkon, liczba okien)</span>
+          <textarea id="bk-notes" rows="3" placeholder="np. 6 okien + balkon"></textarea>
+        </label>
+
+        <div style="display:flex;gap:10px;align-items:center;margin-top:12px">
+          <button class="btn" type="submit">Zarezerwuj</button>
+          <button class="btn" type="button" id="bk-refresh" style="background:#fff;color:var(--fg)">Odśwież</button>
+          <span class="muted status" id="bk-status"></span>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // KONFIG – PODMIEŃ URL po wdrożeniu Web Appa
+    window.BK_API_BASE = "https://script.google.com/macros/s/AKfycbxU0r--RUzaO6896wMy6V7ia5NlIaNclnKVyni1ZX2w75nNxbdnOgVvbrzCNpY3bkceqw/exec";
+  </script>
+  <script src="./booking.js" defer></script>
+</body>
+</html>
