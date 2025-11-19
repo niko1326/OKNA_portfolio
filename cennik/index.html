@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Cennik i kalkulator – Czyste Okna Gdańsk</title>
+  <meta name="description" content="Orientacyjny cennik i prosty kalkulator wyceny mycia okien w Gdańsku / Wrzeszczu." />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="Cennik i kalkulator – Czyste Okna Gdańsk" />
+  <meta property="og:description" content="Wybierz ilość okien i zobacz orientacyjną wycenę." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pl_PL" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+  :root{
+    --bg:#f6f6f4;
+    --fg:#1f2328;
+    --muted:#60646c;
+    --card:#ffffff;
+    --line:#e3e4e0;
+    --accent:#4a7c59;
+    --accent-2:#8c9a8e;
+    --radius:14px;
+    --shadow:0 8px 24px rgba(0,0,0,.06);
+    --win-h:183px; /* bazowa wysokość szkicu okna */
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1210;
+      --fg:#e7e7e4;
+      --muted:#a3a79f;
+      --card:#121614;
+      --line:#202620;
+      --accent:#7ea68c;
+      --accent-2:#98b4a0;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  body[data-theme="light"]{
+    color-scheme: light;
+    --bg:#f6f6f4; --fg:#1f2328; --muted:#60646c; --card:#ffffff; --line:#e3e4e0;
+    --accent:#4a7c59; --accent-2:#8c9a8e; --shadow:0 8px 24px rgba(0,0,0,.06);
+  }
+  body[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#0f1210; --fg:#e7e7e4; --muted:#a3a79f; --card:#121614; --line:#202620;
+    --accent:#7ea68c; --accent-2:#98b4a0; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline; text-underline-offset:2px}
+
+  /* Header */
+  header{position:sticky;top:0;backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line);z-index:20}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),color-mix(in oklab,var(--accent) 35%, white));display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:var(--shadow)}
+  .brand strong{font-size:16px}
+  .brand .muted{font-size:13px;color:var(--muted)}
+  nav .btn{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+  nav .btn + .btn{margin-left:8px}
+
+  .toggle{
+    --h:26px;
+    --w:48px;
+    --p:3px;
+    position:relative; display:inline-flex; align-items:center; gap:8px;
+  }
+  .toggle input{position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer}
+  .track{
+    width:var(--w); height:var(--h); border-radius:999px; background:color-mix(in oklab, var(--muted) 25%, transparent);
+    box-shadow:inset 0 0 0 1px var(--line);
+    position:relative; transition:background .25s ease;
+  }
+  .thumb{
+    position:absolute; top:var(--p); left:var(--p); width:calc(var(--h) - var(--p)*2); height:calc(var(--h) - var(--p)*2);
+    background:var(--card); border-radius:50%; box-shadow:var(--shadow); transition:transform .25s ease;
+  }
+  .toggle[data-checked="true"] .track{background:var(--accent)}
+  .toggle[data-checked="true"] .thumb{transform:translateX(calc(var(--w) - var(--h)))}
+
+  main{padding:32px 0 40px}
+  .hero-calc h1{font-size:clamp(26px,3.6vw,34px);margin:10px 0 10px}
+  .hero-calc p{margin:0 0 16px;color:var(--muted);max-width:640px}
+  .eyebrow{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);background:var(--card);margin-bottom:10px}
+
+  .section{padding:28px 0}
+  .section h2{font-size:clamp(22px,3.2vw,30px);margin:0 0 8px}
+  .muted{color:var(--muted)}
+
+  /* === Rezerwacja – layout formularza === */
+
+.row{
+  display:grid;
+  gap:12px;
+  grid-template-columns:1fr 1fr;
+}
+
+@media (max-width:640px){
+  .row{grid-template-columns:1fr;}
+}
+
+/* inputy / selecty / textarea wewnątrz cennika też mogą z tego skorzystać */
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card);
+  color:var(--fg);
+  font-family:inherit;
+  font-size:14px;
+}
+
+/* przycisk w formularzu rezerwacji */
+button.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* telefon: prefiks + numer */
+.phone-row{
+  display:flex;
+  gap:8px;
+}
+
+.phone-row select{
+  width:auto;
+  flex:0 0 120px;
+  min-width:120px;
+}
+
+.phone-row input{
+  flex:1;
+  width:auto;
+}
+
+/* toolbar tygodnia */
+.week-toolbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.week-toolbar .wkbtn{
+  border:1px solid var(--line);
+  background:var(--card);
+  color:inherit;
+  border-radius:10px;
+  padding:6px 10px;
+  min-width:40px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.week-toolbar .wktitle{
+  flex:1;
+  text-align:center;
+  font-weight:700;
+}
+
+.status{
+  font-size:13px;
+}
+
+
+  .grid{display:grid;gap:18px}
+  .price-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:18px}
+  .price-grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .price-grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .price-grid--1{grid-template-columns:repeat(1,minmax(0,1fr)); width:60%; margin:auto;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .price-item h3{margin:10px 0 4px;font-size:16px}
+  .price-item p{margin:0 0 8px;font-size:14px}
+  .price-row{display:flex;align-items:center;justify-content:center;font-size:14px; margin-top: auto; margin-bottom:0;}
+  .unit-price{font-weight:600}
+
+  .qty-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;  /* środek w poziomie */         /* TO powoduje „stick to bottom” w flex-kolumnie */
+    padding-top:8px;         /* mały odstęp od ceny */
+  }
+
+  .qty-row .qty{min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
+
+
+  .qty-btn{
+    border-radius:999px;
+    border:2px solid color-mix(in oklab, var(--accent) 65%, var(--line));
+    background:color-mix(in oklab,var(--accent) 14%, var(--card));
+    padding:8px 18px;
+    font-size:18px;
+    font-weight:600;
+    line-height:1;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    color:white;
+    transition:
+      background .18s ease,
+      border-color .18s ease,
+      transform .12s ease,
+      box-shadow .18s ease;
+  }
+
+  .qty-btn:hover{
+    background:var(--accent);
+    border-color:color-mix(in oklab,var(--accent) 80%, black);
+    color:#fff;
+    transform:translateY(-1px);
+  }
+
+  .qty-btn:active{
+    transform:translateY(0);
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+  }
+
+  .summary{margin-top:24px}
+  .summary-main{font-size:18px;margin:0 0 4px}
+  .summary strong{font-weight:700}
+
+  .foot{padding-top:16px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);margin-top:32px}
+
+  /* szkice okien w CSS */
+
+  /* szkic przeszklenia balkonu L */
+  .balcony-ill{
+    position:relative;
+    height:200px;
+    aspect-ratio:2/3;
+    margin:0 auto 10px;
+    padding-right:15%;
+  }
+
+  .balcony-ill__side,
+  .balcony-ill__front{
+    position:absolute;
+    box-sizing:border-box;
+    border:2px solid color-mix(in oklab, var(--fg) 70%, black);
+    background:linear-gradient(135deg,
+      color-mix(in oklab,var(--bg) 5%, white),
+      color-mix(in oklab,var(--bg) 2%, rgb(183, 213, 223)));
+  }
+
+  /* wąska boczna szyba (górny prostokąt) */
+  .balcony-ill__side{
+    left:8px;
+    top:8px;
+    width:40%;
+    height:60%;
+  }
+
+  /* szerszy front (dolny prostokąt) */
+  .balcony-ill__front{
+    left:8px;
+    bottom:8px;
+    width:75%;
+    height:40%;
+  }
+
+  .window{
+    position:relative;
+    height:var(--win-h);
+    aspect-ratio:3/5;
+    margin:0 auto 10px;
+    background:linear-gradient(135deg,
+      color-mix(in oklab,var(--bg) 88%, white),
+      color-mix(in oklab,var(--bg) 70%, white));
+  }
+
+  .price-item{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+
+  /* wspólne pole na grafikę / schemat okna w kafelku */
+  .tile-visual{
+    height:190px;           /* dostosuj pod swoje rysunki */
+    display:flex;
+    align-items:flex-start;   /* rysunek „stoi” na dole pola */
+    justify-content:center;
+    margin:0 0 10px;
+  }
+
+  /* opcjonalnie, gdyby któryś rysunek był szerszy / bardziej poziomy */
+  .tile-visual--wide{
+    align-items:center;
+  }
+
+
+  /* krótsze okna – 9/10 wysokości */
+  .window--short{
+    height:calc(var(--win-h) * 0.9);
+  }
+
+  .window .pane{
+    position:absolute;
+    left:10px;
+    right:10px;
+    background:linear-gradient(135deg,
+      color-mix(in oklab,var(--bg) 5%, white),
+      color-mix(in oklab,var(--bg) 2%, rgb(183, 213, 223)));
+  }
+
+  .window--stacked .pane-top{
+    top:10px;
+    height:42.5%;
+    border-bottom-width:1px;
+  }
+
+  .window--stacked .pane-bottom{
+    bottom:10px;
+    height:37.5%;
+    border-top-width:1px;
+  }
+
+  .window-row{
+    display:flex;
+    gap:0;
+    justify-content:center;
+    margin-bottom:12px;
+  }
+
+  /* layout dla kafelka balkonu (górna/dolna tafla) */
+  .price-item--balcony .balcony-layout{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:12px;
+  }
+
+  .balcony-labels{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+
+  .balcony-label{
+    color:var(--muted);
+    white-space:nowrap;
+  }
+
+  .price-item--balcony .balcony-columns{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:16px;
+    margin-top:10px;
+    padding-top:12px;
+    border-top:1px solid var(--line);
+  }
+
+  .price-item--balcony .balcony-col h3{
+    font-size:15px;
+    margin-top:0;
+  }
+
+  @media (max-width:920px){
+    .price-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .price-grid--1{grid-template-columns:repeat(1,minmax(0,1fr))}
+  }
+  @media (max-width:600px){
+    .wrap{max-width:100%;padding:0 12px}
+    .nav{padding:12px 0}
+    .brand .muted{display:none}
+    main{padding:24px 0 32px}
+    .price-grid,
+    .price-grid--3,
+    .price-grid--1{grid-template-columns:1fr; width: 100%}
+
+    .price-item--balcony .balcony-layout{
+      flex-direction:row;
+      justify-content:space-between;
+    }
+    .price-item--balcony .balcony-columns{
+      grid-template-columns:1fr;
+    }
+
+    .card{padding:10px 0 0;}
+  }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a href="/">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <strong>Czyste Okna</strong><br>
+            <span class="muted">Mycie okien i balkonów</span>
+          </div>
+        </div>
+      </a>
+      <nav>
+        <a class="btn ghost" href="/cennik/">Cennik</a>
+        <a class="btn ghost" href="#kontakt">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero-calc" style="margin-top:20px;">
+      <h1>Cennik i prosty kalkulator</h1>
+      <p>
+        Wybierz przybliżoną ilość okien w swoim mieszkaniu. To <strong>orientacyjny</strong> koszt mycia –
+        dokładną cenę potwierdzimy po obejrzeniu okien (np. ze zdjęć na WhatsApp).
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Typy okien</h2>
+      <p class="muted">Ceny za <strong>jedno</strong> okno / drzwi balkonowe. Ramy i parapety w cenie.</p>
+
+<!-- JEDEN WSPÓLNY priceGrid (wrapper) -->
+      <div id="priceGrid">
+
+        <!-- rząd 1: 4 kafelki -->
+        <div class="grid price-grid price-grid--4">
+
+          <!-- 1: Okno 2-częściowe (góra–dół) -->
+          <article class="card price-item" data-price="38" data-qty="0" data-time="12">
+            <div class="tile-visual">
+              <div class="window window--stacked window--short">
+                <div class="pane pane-top"></div>
+                <div class="pane pane-bottom"></div>
+              </div>
+            </div>
+            <h3>Okno 2-częściowe</h3>
+            <p class="muted">(góra–dół)</p>
+            <div class="price-row">
+              <span class="unit-price">38 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+          <!-- 2: Okno 1-skrzydłowe pionowe -->
+          <article class="card price-item" data-price="25" data-qty="0" data-time="8">
+            <div class="tile-visual">
+              <div class="window" style="aspect-ratio:1/1; height:110px;">
+                <div class="pane" style="top:10px; height:80%"></div>
+              </div>
+            </div>
+            <h3>Okno 1-skrzydłowe</h3>
+            <p class="muted">(małe)</p>
+            <div class="price-row">
+              <span class="unit-price">25 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+          <!-- 3: szerokie 3-skrzydłowe -->
+          <article class="card price-item" data-price="50" data-qty="0" style="position:grid" data-time="14">
+            <div class="tile-visual">
+              <div class="window-row">
+                <div class="window window--stacked window--short" style="border-right:0; aspect-ratio:6/11; margin:0;">
+                  <div class="pane pane-top"></div>
+                  <div class="pane pane-bottom"></div>
+                </div>
+                <div class="window window--stacked window--short" style="border-left:0; aspect-ratio:6/11; margin:0;">
+                  <div class="pane pane-top"></div>
+                  <div class="pane pane-bottom"></div>
+                </div>
+              </div>
+            </div>
+            <h3>Okno 4-skrzydłowe z podziałem</h3>
+            <p class="muted">(4 szyby)</p>
+            <div class="price-row">
+              <span class="unit-price">50 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+          <!-- 4: drzwi balkonowe -->
+          <article class="card price-item" data-price="55" data-qty="0" data-time="14">
+            <div class="tile-visual">
+              <div class="window-row">
+                <div class="window window--stacked" style="border-right:0; aspect-ratio:6/11; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+                <div class="window window--stacked" style="border-left:0; aspect-ratio:6/11; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+              </div>
+            </div>
+            <h3>Drzwi balkonowe 2-skrzydłowe</h3>
+            <p class="muted">(2 wysokie tafle)</p>
+            <div class="price-row">
+              <span class="unit-price">55 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+        </div><!-- /row 1 -->
+
+        <!-- rząd 2: 3 kafelki -->
+        <div class="grid price-grid price-grid--3">
+
+          <!-- 2-skrzydłowe standard -->
+          <article class="card price-item" data-price="65" data-qty="0" data-time="17">
+            <div class="tile-visual">
+              <div class="window-row">
+                <div class="window window--stacked" style="border-right:0; aspect-ratio:6/12; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+                <div class="window window--stacked" style="border-left:0; border-right:0; aspect-ratio:6/12; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+                <div class="window window--stacked" style="border-left:0; aspect-ratio:6/12; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+              </div>
+            </div>
+            <h3>Drzwi balkonowe 3-skrzydłowe</h3>
+            <p class="muted">(3 wysokie tafle)</p>
+            <div class="price-row">
+              <span class="unit-price">65 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+          <!-- 3-skrzydłowe szerokie (drugi wariant) -->
+          <article class="card price-item" data-price="55" data-qty="0" style="position:grid" data-time="10">
+            <div class="tile-visual">
+              <div class="window-row">
+                <div class="window window--stacked" style="border-right:0; aspect-ratio:6/11; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+              </div>
+            </div>
+            <h3>Okno 3-skrzydłowe / szerokie</h3>
+            <p class="muted">duże okno salonowe, np. z wyjściem na balkon francuski</p>
+            <div class="price-row">
+              <span class="unit-price">55 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+          <!-- drzwi balkonowe – drugi wariant -->
+          <article class="card price-item" data-price="60" data-qty="0" data-time="16">
+            <div class="tile-visual">
+              <div class="window-row">
+                <div class="window window--stacked" style="border-right:0; aspect-ratio:6/11; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+                <div class="window window--stacked" style="border-left:0; aspect-ratio:11/13; margin:0;">
+                  <div class="pane" style="top:10px; height:90%"></div>
+                </div>
+              </div>
+            </div>
+            <h3>Okno balkonowe — duże i średnie skrzydło</h3>
+            <p class="muted">(asymetryczne)</p>
+            <div class="price-row">
+              <span class="unit-price">60 zł / szt.</span>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-change="-1">−</button>
+              <span class="qty">0</span>
+              <button class="qty-btn" type="button" data-change="1">+</button>
+            </div>
+          </article>
+
+        </div><!-- /row 2 -->
+
+
+        <h2 style="margin-top:30px;">Przeszklenia balkonowe</h2>
+        <p class="muted">Ceny za górne i dolne tafle osobno</p>
+
+        <!-- rząd 3: 1 kafelek (przeszklenie balkonu) -->
+        <div class="grid price-grid price-grid--1">
+          <article
+            class="card price-item price-item--balcony"
+            data-price-top="25"
+            data-price-bottom="30"
+            data-qty-top="0"
+            data-qty-bottom="0"
+            data-time-top="5"
+            data-time-bottom="7"
+          >
+            <div class="tile-visual tile-visual--wide">
+              <div class="balcony-layout">
+                <div class="balcony-labels">
+                  <div class="balcony-label">GÓRNA TAFLA →<br> <br></div>
+                  <div class="balcony-label">DOLNA TAFLA →</div>
+                </div>
+                <div class="balcony-ill">
+                  <div class="balcony-ill__side"></div>
+                  <div class="balcony-ill__front"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="balcony-columns">
+              <!-- kolumna: górna tafla -->
+              <div class="balcony-col">
+                <h3>Górna tafla</h3>
+                <div class="price-row">
+                  <span class="unit-price">25 zł / tafla</span>
+                </div>
+                <div class="qty-row">
+                  <button class="qty-btn balcony-btn" type="button" data-change="-1" data-part="top">−</button>
+                  <span class="qty balcony-qty-top">0</span>
+                  <button class="qty-btn balcony-btn" type="button" data-change="1" data-part="top">+</button>
+                </div>
+              </div>
+
+              <!-- kolumna: dolna tafla -->
+              <div class="balcony-col">
+                <h3>Dolna tafla</h3>
+                <div class="price-row">
+                  <span class="unit-price">30 zł / tafla</span>
+                </div>
+                <div class="qty-row">
+                  <button class="qty-btn balcony-btn" type="button" data-change="-1" data-part="bottom">−</button>
+                  <span class="qty balcony-qty-bottom">0</span>
+                  <button class="qty-btn balcony-btn" type="button" data-change="1" data-part="bottom">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div><!-- /row 3 -->
+
+      </div><!-- /#priceGrid -->
+
+      <h1 style="margin-top:30px;">Podsumowanie</h1>
+
+      <div class="summary">
+        <p class="summary-main">
+          Razem: <strong><span id="windowsCount">0</span> okien</strong>
+          <span id="balconySummary"></span><br>
+          Szacunkowa cena: <strong id="totalPrice">0 zł</strong> •
+          Szacunkowy czas: <strong id="totalTime">0 min</strong>
+        </p>
+        <p class="muted">
+          To orientacyjna wycena dla standardowych zabrudzeń. Przy nietypowych oknach lub bardzo
+          zabrudzonych ramach cena może się nieznacznie różnić.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- ▼ NOWA SEKCJA: REZERWACJA ▼ -->
+    <section class="section" id="rezerwacja">
+      <h2>Umów termin mycia okien</h2>
+      <p class="muted">
+        Wybierz dogodny dzień i dostępne bloki godzinowe. Potem podaj dane kontaktowe, a my
+        potwierdzimy szczegóły i cenę na podstawie kalkulatora powyżej.
+      </p>
+
+      <div class="card">
+        <form id="bookingForm">
+          <div class="week-toolbar">
+            <button type="button" id="bk-prev" class="wkbtn" aria-label="Poprzedni tydzień">‹</button>
+            <div id="bk-title" class="wktitle">Tydzień</div>
+            <button type="button" id="bk-next" class="wkbtn" aria-label="Następny tydzień">›</button>
+          </div>
+
+          <div id="bk-grid"></div>
+          <small id="bk-hint" class="muted"></small>
+          <p class="muted" style="margin-top:6px;">
+            <span id="bk-offer"></span>
+          </p>
+
+          <div class="row">
+            <label class="block" style="margin-top:10px">
+              <span>Imię</span>
+              <input id="bk-name" type="text" required placeholder="np. Kasia">
+            </label>
+
+            <label class="block" style="margin-top:10px">
+              <span>Telefon</span>
+              <div class="phone-row">
+                <select id="bk-prefix" aria-label="Prefiks kraju">
+                  <option value="+48" selected>+48 (PL)</option>
+                  <option value="+49">+49 (DE)</option>
+                  <option value="+44">+44 (UK)</option>
+                  <option value="+420">+420 (CZ)</option>
+                  <option value="+421">+421 (SK)</option>
+                  <option value="+43">+43 (AT)</option>
+                  <option value="+358">+358 (FI)</option>
+                  <option value="+33">+33 (FR)</option>
+                  <option value="+34">+34 (ES)</option>
+                  <option value="+39">+39 (IT)</option>
+                  <option value="+31">+31 (NL)</option>
+                  <option value="+32">+32 (BE)</option>
+                  <option value="+36">+36 (HU)</option>
+                  <option value="+40">+40 (RO)</option>
+                  <option value="+1">+1 (US/CA)</option>
+                </select>
+
+                <input id="bk-phone"
+                        type="tel"
+                        inputmode="tel"
+                        autocomplete="tel"
+                        placeholder="123 123 123"
+                        aria-describedby="phoneHelp" />
+              </div>
+            </label>
+          </div>
+
+          <label class="block" style="margin-top:8px">
+            <span>E-mail</span>
+            <input id="bk-email" type="email" required placeholder="example@gmail.com"
+                    autocomplete="email" inputmode="email">
+          </label>
+
+          <label class="block" style="margin-top:8px">
+            <span>Adres</span>
+            <input id="bk-address" type="text" required
+                    placeholder="ul. Jana Pawła II 1/15, 10-108 Gdańsk">
+          </label>
+
+          <label class="block" style="margin-top:8px">
+            <span>Uwagi (np. balkon, liczba okien)</span>
+            <textarea id="bk-notes" rows="3" placeholder="np. 6 okien + balkon"></textarea>
+          </label>
+
+          <p style="font-size:13px;color:var(--muted);line-height:1.4;margin-top:8px;">
+            Klikając przycisk <b>„Zarezerwuj i wyraź zgodę na RODO”</b>, potwierdzasz zapoznanie się
+            z informacją o przetwarzaniu danych osobowych oraz wyrażasz zgodę na ich przetwarzanie
+            w celu realizacji rezerwacji. Administratorem danych jest <b>Czyste Okna</b>,
+            e-mail: <a href="mailto:czysteokna.com.pl@gmail.com">czysteokna.com.pl@gmail.com</a>.
+          </p>
+
+          <div style="display:flex;gap:10px;align-items:center;margin-top:12px">
+            <button class="btn" type="submit">Zarezerwuj i wyraź zgodę na RODO</button>
+            <span class="muted status" id="bk-status"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+    <!-- ▲ KONIEC BLOKU REZERWACJI ▲ -->
+
+    <section class="section">
+      <h2>Co dalej?</h2>
+      <p class="muted">
+        Zadzwoń lub napisz na WhatsApp i podeślij zdjęcia okien / balkonu – potwierdzimy
+        dokładną cenę i zaproponujemy najbliższe wolne terminy.
+      </p>
+      <p>
+        <a class="btn" href="tel:+48735400610">Zadzwoń: 735 400 610</a>
+        <a class="btn" href="https://wa.me/48735400610" target="_blank" rel="noopener">WhatsApp</a>
+      </p>
+    </section>
+
+    <div class="foot">
+      © <span id="year"></span> Czyste Okna Gdańsk • Cennik orientacyjny – ostateczna cena po ustaleniu zakresu prac.
+    </div>
+  </main>
+
+  <script>
+    // rok w stopce
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // kalkulator: ilości, suma i czas
+    (function(){
+      const cards = document.querySelectorAll('.price-item');
+      const windowsCountEl   = document.getElementById('windowsCount');
+      const balconySummaryEl = document.getElementById('balconySummary');
+      const totalPriceEl     = document.getElementById('totalPrice');
+      const totalTimeEl      = document.getElementById('totalTime');
+
+      // ile bloków 60-minutowych trzeba zarezerwować
+      function calcBlocks(totalMinutes){
+        if (totalMinutes <= 0) return 0;
+
+        let hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+
+        // minimum 1 blok, jeśli cokolwiek > 0
+        if (hours === 0) return 1;
+
+        // powyżej 1:15, 2:15, 3:15 → zaokrąglamy do góry
+        if (mins > 15){
+          hours += 1;
+        }
+        return hours;
+      }
+
+      function formatTime(totalMinutes){
+        // nic nie wybrane
+        if (totalMinutes <= 0) return '0 min';
+
+        let hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+
+        // jeśli mamy cokolwiek > 0 min, minimum to 1 h
+        if (hours === 0){
+          return '1 h';
+        }
+
+        // jeżeli przekroczymy 1:15, 2:15, 3:15... → zaokrąglamy w górę
+        if (mins > 15){
+          hours += 1;
+        }
+
+        return hours + ' h';
+      }
+
+      function updateTotals(){
+        let windowsCount  = 0;   // tylko zwykłe okna / drzwi
+        let hasBalcony    = false;
+        let totalPrice    = 0;
+        let totalMinutes  = 0;
+
+        const breakdown = []; // do maila / eventu: każdy typ osobno
+
+        cards.forEach(card => {
+          const titleEl = card.querySelector('h3');
+          const label   = titleEl ? titleEl.textContent.trim() : 'Pozycja';
+
+          // specjalny przypadek: balkon z górną i dolną taflą
+          if (card.classList.contains('price-item--balcony')){
+            const qtyTop    = parseInt(card.dataset.qtyTop    || '0', 10);
+            const qtyBottom = parseInt(card.dataset.qtyBottom || '0', 10);
+            const priceTop    = parseFloat(card.dataset.priceTop    || '0');
+            const priceBottom = parseFloat(card.dataset.priceBottom || '0');
+            const timeTop     = parseFloat(card.dataset.timeTop     || '0');
+            const timeBottom  = parseFloat(card.dataset.timeBottom  || '0');
+
+            const subtotalTop    = qtyTop    * priceTop;
+            const subtotalBottom = qtyBottom * priceBottom;
+
+            totalPrice   += subtotalTop + subtotalBottom;
+            totalMinutes += qtyTop * timeTop  + qtyBottom * timeBottom;
+
+            if (qtyTop + qtyBottom > 0){
+              hasBalcony = true;
+            }
+
+            breakdown.push({
+              type: 'balcony-top',
+              label: label + ' – górna tafla',
+              qty: qtyTop,
+              unitPrice: priceTop,
+              subtotal: subtotalTop
+            });
+            breakdown.push({
+              type: 'balcony-bottom',
+              label: label + ' – dolna tafla',
+              qty: qtyBottom,
+              unitPrice: priceBottom,
+              subtotal: subtotalBottom
+            });
+
+          } else {
+            // standardowe karty (okna)
+            const qty   = parseInt(card.dataset.qty   || '0', 10);
+            const price = parseFloat(card.dataset.price || '0');
+            const timePerWindow = parseFloat(card.dataset.time || '0');
+
+            const subtotal = qty * price;
+
+            windowsCount += qty;
+            totalPrice   += subtotal;
+            totalMinutes += qty * timePerWindow;
+
+            breakdown.push({
+              type: 'window',
+              label,
+              qty,
+              unitPrice: price,
+              subtotal
+            });
+          }
+        });
+
+        // liczba okien
+        windowsCountEl.textContent = windowsCount;
+
+        // info o przeszkleniu balkonowym
+        if (hasBalcony){
+          balconySummaryEl.textContent = ' + przeszklenie balkonowe';
+        } else {
+          balconySummaryEl.textContent = '';
+        }
+
+        // cena
+        let totalPriceLabel = '0 zł';
+        if (totalPrice === 0){
+          totalPriceEl.textContent = '0 zł';
+        } else {
+          totalPriceLabel = totalPrice.toLocaleString('pl-PL', {
+            style: 'currency',
+            currency: 'PLN',
+            maximumFractionDigits: 0
+          });
+          totalPriceEl.textContent = totalPriceLabel;
+        }
+
+        // czas (ładny napis) + liczba bloków
+        const timeLabel  = formatTime(totalMinutes);
+        const blocks     = calcBlocks(totalMinutes);
+        totalTimeEl.textContent = timeLabel;
+
+        // ===== przekazujemy stan kalkulatora dla modułu rezerwacji =====
+        const textLines = [];
+
+        textLines.push(`Okna: ${windowsCount}${hasBalcony ? ' + przeszklenie balkonowe' : ''}`);
+
+        breakdown
+          .filter(item => item.qty > 0)
+          .forEach(item => {
+            textLines.push(
+              `• ${item.label}: ${item.qty} szt. × ${item.unitPrice} zł = ${item.subtotal} zł`
+            );
+          });
+
+        if (totalPrice > 0){
+          textLines.push(`Szacunkowa cena: ${totalPriceLabel}`);
+        }
+        if (totalMinutes > 0){
+          textLines.push(`Szacunkowy czas: ${timeLabel} (${blocks} blok(i) × 60 min)`);
+        }
+
+        window.BK_CALC_STATE = {
+          windowsCount,
+          hasBalcony,
+          totalPrice,
+          totalMinutes,
+          blocks,
+          breakdown,
+          text: textLines.join('\n')
+        };
+
+        // powiadamiamy booking.js, że kalkulator się zmienił
+        if (typeof window.dispatchEvent === 'function'){
+          window.dispatchEvent(new CustomEvent('bk-calc-change'));
+        }
+      }
+
+      // obsługa przycisków
+      cards.forEach(card => {
+        if (card.classList.contains('price-item--balcony')){
+          // balkon ma własną logikę liczników
+          const topQtyEl    = card.querySelector('.balcony-qty-top');
+          const bottomQtyEl = card.querySelector('.balcony-qty-bottom');
+          const btns        = card.querySelectorAll('.balcony-btn');
+
+          function syncBalcony(){
+            topQtyEl.textContent    = card.dataset.qtyTop    || '0';
+            bottomQtyEl.textContent = card.dataset.qtyBottom || '0';
+          }
+          syncBalcony();
+
+          btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+              const change = Number(btn.dataset.change || 0);
+              const part   = btn.dataset.part === 'bottom' ? 'Bottom' : 'Top';
+              const key    = 'qty' + part;
+
+              let qty = parseInt(card.dataset[key] || '0', 10) + change;
+              if (qty < 0) qty = 0;
+              card.dataset[key] = String(qty);
+
+              syncBalcony();
+              updateTotals();
+            });
+          });
+
+        } else {
+          // standardowe karty
+          const qtyEl = card.querySelector('.qty');
+          const btns  = card.querySelectorAll('.qty-btn');
+
+          function sync(){
+            qtyEl.textContent = card.dataset.qty || '0';
+          }
+          sync();
+
+          btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+              const change = Number(btn.dataset.change || 0);
+              let qty = parseInt(card.dataset.qty || '0', 10) + change;
+              if (qty < 0) qty = 0;
+              card.dataset.qty = String(qty);
+              sync();
+              updateTotals();
+            });
+          });
+        }
+      });
+
+      updateTotals();
+    })();
+  </script>
+  <script>
+    // KONFIG – ten sam URL co w /rezerwacja/index.html
+    window.BK_API_BASE = "https://script.google.com/macros/s/AKfycbyaZYnwXb7EhGu1HUsK7lv_4PspzbLuKHpXtDeYt0xv7KugYEKWlFxo5rAtvmGbfEHNNw/exec";
+  </script>
+  <script src="/rezerwacja/booking.js" defer></script>
+</body>
+</html>

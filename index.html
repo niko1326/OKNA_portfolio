@@ -59,7 +59,7 @@
   a:hover{text-decoration:underline; text-underline-offset:2px}
 
   /* Header */
-  header{position:sticky;top:0;background:color-mix(in oklab, var(--card) 88%, transparent);backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line);z-index:20}
+  header{position:sticky;top:0;backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line);z-index:20}
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
   .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
   .brand{display:flex;gap:12px;align-items:center}
@@ -188,23 +188,18 @@
 <body>
   <header>
     <div class="wrap nav">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <strong>Czyste Okna Gdańsk</strong><br>
-          <span class="muted">Mycie okien i balkonów</span>
+      <a href="/"></a>
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <strong>Czyste Okna Gdańsk</strong><br>
+            <span class="muted">Mycie okien i balkonów</span>
+          </div>
         </div>
-      </div>
+      </a>
       <nav>
-        <a class="btn ghost" href="/cennik/cennik.html">Cennik</a>
-        <a class="btn ghost" href="#portfolio">Portfolio</a>
+        <a class="btn ghost" href="/cennik/">Cennik</a>
         <a class="btn ghost" href="#kontakt">Kontakt</a>
-
-        <!-- Suwak motywu -->
-        <label class="toggle" id="themeToggle" aria-label="Przełącz motyw (jasny/ciemny)">
-          <span class="track" aria-hidden="true"><span class="thumb"></span></span>
-          <input type="checkbox" aria-hidden="true" />
-        </label>
       </nav>
     </div>
   </header>
@@ -279,7 +274,7 @@
       <article class="compare poster">
         <figure class="compare-figure">
           <div class="compare-inner">
-            <img src="/img/plakat.jpg" alt="Plakat – Studenci Myją Okna" loading="lazy" decoding="async" />
+            <img src="/img/plakat.png" alt="Plakat – Studenci Myją Okna" loading="lazy" decoding="async" />
           </div>
           <figcaption class="figcap">
             <span>Plakat promocyjny</span>
