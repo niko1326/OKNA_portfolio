@@ -402,7 +402,7 @@
       h.style.borderRadius = "10px";
       h.style.border = "1px solid var(--line)";
       h.style.background = "var(--card)";
-      h.innerHTML = `${wkdays[i]}<br>${fmtDDMM(d.date)}`;
+      h.innerHTML = `${wkdays[i]}<br><span class="bk-daynum">${fmtDDMM(d.date)}</span>`;
       // 🔴 highlight "today"
       if (d.date === todayISO()) {
         h.style.borderColor = "#e5484d";
