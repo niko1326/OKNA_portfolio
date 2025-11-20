@@ -15,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
   :root{
     /* LIGHT – bazowe (gdy brak ręcznego wyboru i system = light) */
@@ -177,7 +178,7 @@
     "name":"Czyste Okna Gdańsk",
     "image":"https://twoj-login.github.io/img/realizacja-1-po.jpg",
     "address":{"@type":"PostalAddress","addressLocality":"Gdańsk","addressRegion":"Pomorskie","addressCountry":"PL"},
-    "areaServed":"Gdańsk, Wrzeszcz",
+    "areaServed":"Gdańsk",
     "telephone":"+48 735 400 610",
     "url":"https://twoj-login.github.io/",
     "priceRange":"PLN",
@@ -188,15 +189,14 @@
 <body>
   <header>
     <div class="wrap nav">
-      <a href="/"></a>
-        <div class="brand">
-          <div class="logo"></div>
-          <div>
-            <strong>Czyste Okna Gdańsk</strong><br>
-            <span class="muted">Mycie okien i balkonów</span>
-          </div>
+      <a href="/" class="brand">
+        <div class="logo"></div>
+        <div>
+          <strong>Czyste Okna</strong><br>
+          <span class="muted">Mycie okien i balkonów</span>
         </div>
       </a>
+
       <nav>
         <a class="btn ghost" href="/cennik/">Cennik</a>
         <a class="btn ghost" href="#kontakt">Kontakt</a>
@@ -204,12 +204,12 @@
     </div>
   </header>
 
+
   <main class="wrap">
     <section class="hero" id="start">
       <div>
-        <span class="eyebrow">Gdańsk • Wrzeszcz • Oliwa</span>
         <h1>Czyste okna, jasne mieszkanie</h1>
-        <p>Realne realizacje <strong>przed / po</strong> z Gdańska i okolic. Najszybciej wycenimy przez telefon lub WhatsApp – wyślij zdjęcia okien/balkonu.</p>
+        <p>Realne realizacje <strong>przed / po</strong> z Gdańska i okolic.</p>
         <div class="cta">
           <a class="btn primary" href="tel:+48735400610">Zadzwoń: 735 400 610</a>
           <a class="btn" href="https://wa.me/48735400610" target="_blank" rel="noopener">WhatsApp</a>
@@ -220,7 +220,6 @@
         <ul>
           <li>Szyby, ramy, parapety</li>
           <li>Balkony i balustrady</li>
-          <li>Wycena: telefon / WhatsApp</li>
         </ul>
       </div>
     </section>
@@ -285,7 +284,7 @@
     </section>
 
     <section class="section" id="kontakt">
-      <h2>Kontakt i wycena</h2>
+      <h2>Kontakt</h2>
       <div class="grid contact-grid">
         <div class="card">
           <h3>Telefon</h3>
@@ -296,10 +295,6 @@
           <h3>WhatsApp</h3>
           <p><a class="btn" href="https://wa.me/48735400610" target="_blank" rel="noopener">Napisz na WhatsApp</a></p>
           <p class="muted">Wyślij zdjęcia okien/balkonu – podamy dokładniej.</p>
-        </div>
-        <div class="card">
-          <h3>Obsługiwany obszar</h3>
-          <p>Gdańsk – Wrzeszcz, Zaspa, Oliwa i okolice</p>
         </div>
       </div>
       <p style="margin-top:12px" class="muted">Wycena telefoniczna pod nr <strong>735 400 610</strong>.</p>

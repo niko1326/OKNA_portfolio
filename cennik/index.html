@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Cennik i kalkulator – Czyste Okna Gdańsk</title>
-  <meta name="description" content="Orientacyjny cennik i prosty kalkulator wyceny mycia okien w Gdańsku / Wrzeszczu." />
+  <meta name="description" content="Orientacyjny cennik i prosty kalkulator wyceny mycia okien w Trójmieście." />
   <meta name="robots" content="index,follow" />
   <meta property="og:title" content="Cennik i kalkulator – Czyste Okna Gdańsk" />
   <meta property="og:description" content="Wybierz ilość okien i zobacz orientacyjną wycenę." />
@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <style>
+<style>
   :root{
     --bg:#f6f6f4;
     --fg:#1f2328;
@@ -52,21 +52,49 @@
   }
 
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  html,body{
+    margin:0;
+    padding:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+  }
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline; text-underline-offset:2px}
 
   /* Header */
-  header{position:sticky;top:0;backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line);z-index:20}
+  header{
+    position:sticky;
+    top:0;
+    backdrop-filter:saturate(160%) blur(10px);
+    border-bottom:1px solid var(--line);
+    z-index:20;
+  }
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
   .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
   .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),color-mix(in oklab,var(--accent) 35%, white));display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:var(--shadow)}
+  .logo{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),color-mix(in oklab,var(--accent) 35%, white));
+    display:grid;
+    place-items:center;
+    color:#fff;
+    font-weight:900;
+    box-shadow:var(--shadow);
+  }
   .brand strong{font-size:16px}
   .brand .muted{font-size:13px;color:var(--muted)}
-  nav .btn{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+  nav .btn{
+    padding:10px 14px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+  }
   nav .btn + .btn{margin-left:8px}
 
+  /* Toggle (jeśli kiedyś użyjesz) */
   .toggle{
     --h:26px;
     --w:48px;
@@ -75,131 +103,163 @@
   }
   .toggle input{position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer}
   .track{
-    width:var(--w); height:var(--h); border-radius:999px; background:color-mix(in oklab, var(--muted) 25%, transparent);
+    width:var(--w); height:var(--h); border-radius:999px;
+    background:color-mix(in oklab, var(--muted) 25%, transparent);
     box-shadow:inset 0 0 0 1px var(--line);
     position:relative; transition:background .25s ease;
   }
   .thumb{
-    position:absolute; top:var(--p); left:var(--p); width:calc(var(--h) - var(--p)*2); height:calc(var(--h) - var(--p)*2);
-    background:var(--card); border-radius:50%; box-shadow:var(--shadow); transition:transform .25s ease;
+    position:absolute; top:var(--p); left:var(--p);
+    width:calc(var(--h) - var(--p)*2); height:calc(var(--h) - var(--p)*2);
+    background:var(--card); border-radius:50%; box-shadow:var(--shadow);
+    transition:transform .25s ease;
   }
   .toggle[data-checked="true"] .track{background:var(--accent)}
   .toggle[data-checked="true"] .thumb{transform:translateX(calc(var(--w) - var(--h)))}
 
+  /* Główne CTA / przyciski – TAK JAK NA STRONIE GŁÓWNEJ */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 16px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--fg);
+    font-weight:600;
+    box-shadow:0 1px 0 rgba(0,0,0,.03);
+  }
+  .btn.primary{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+  }
+  .btn.ghost{background:var(--card)}
+
+  /* przycisk w formularzu rezerwacji – używa tej samej bazy, ale zawsze zielony */
+  button.btn{
+    border-color:var(--accent);
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+  }
+
   main{padding:32px 0 40px}
   .hero-calc h1{font-size:clamp(26px,3.6vw,34px);margin:10px 0 10px}
   .hero-calc p{margin:0 0 16px;color:var(--muted);max-width:640px}
-  .eyebrow{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);background:var(--card);margin-bottom:10px}
+  .eyebrow{
+    display:inline-block;
+    padding:6px 10px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:12px;
+    color:var(--muted);
+    background:var(--card);
+    margin-bottom:10px;
+  }
 
-  .section{padding:28px 0}
+  .section{padding:42px 0;border-bottom:1px solid var(--line)}
   .section h2{font-size:clamp(22px,3.2vw,30px);margin:0 0 8px}
   .muted{color:var(--muted)}
 
   /* === Rezerwacja – layout formularza === */
+  .row{
+    display:grid;
+    gap:12px;
+    grid-template-columns:1fr 1fr;
+  }
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr;}
+  }
 
-.row{
-  display:grid;
-  gap:12px;
-  grid-template-columns:1fr 1fr;
-}
+  input, select, textarea{
+    width:100%;
+    padding:10px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--fg);
+    font-family:inherit;
+    font-size:14px;
+  }
 
-@media (max-width:640px){
-  .row{grid-template-columns:1fr;}
-}
+  /* telefon: prefiks + numer */
+  .phone-row{
+    display:flex;
+    gap:8px;
+  }
+  .phone-row select{
+    width:auto;
+    flex:0 0 120px;
+    min-width:120px;
+  }
+  .phone-row input{
+    flex:1;
+    width:auto;
+  }
 
-/* inputy / selecty / textarea wewnątrz cennika też mogą z tego skorzystać */
-input, select, textarea{
-  width:100%;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:var(--card);
-  color:var(--fg);
-  font-family:inherit;
-  font-size:14px;
-}
+  /* toolbar tygodnia */
+  .week-toolbar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .week-toolbar .wkbtn{
+    border:1px solid var(--line);
+    background:var(--card);
+    color:inherit;
+    border-radius:10px;
+    padding:6px 10px;
+    min-width:40px;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .week-toolbar .wktitle{
+    flex:1;
+    text-align:center;
+    font-weight:700;
+  }
+  .status{font-size:13px;}
 
-/* przycisk w formularzu rezerwacji */
-button.btn{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 16px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:var(--accent);
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
-
-/* telefon: prefiks + numer */
-.phone-row{
-  display:flex;
-  gap:8px;
-}
-
-.phone-row select{
-  width:auto;
-  flex:0 0 120px;
-  min-width:120px;
-}
-
-.phone-row input{
-  flex:1;
-  width:auto;
-}
-
-/* toolbar tygodnia */
-.week-toolbar{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:10px;
-}
-
-.week-toolbar .wkbtn{
-  border:1px solid var(--line);
-  background:var(--card);
-  color:inherit;
-  border-radius:10px;
-  padding:6px 10px;
-  min-width:40px;
-  cursor:pointer;
-  font-weight:700;
-}
-
-.week-toolbar .wktitle{
-  flex:1;
-  text-align:center;
-  font-weight:700;
-}
-
-.status{
-  font-size:13px;
-}
-
-
+  /* Ogólny grid + kafelki cennika */
   .grid{display:grid;gap:18px}
   .price-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:18px}
   .price-grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}
   .price-grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}
   .price-grid--1{grid-template-columns:repeat(1,minmax(0,1fr)); width:60%; margin:auto;}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    box-shadow:var(--shadow);
+  }
   .price-item h3{margin:10px 0 4px;font-size:16px}
   .price-item p{margin:0 0 8px;font-size:14px}
-  .price-row{display:flex;align-items:center;justify-content:center;font-size:14px; margin-top: auto; margin-bottom:0;}
+  .price-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    margin-top:auto;
+    margin-bottom:0;
+  }
   .unit-price{font-weight:600}
 
   .qty-row{
     display:flex;
     align-items:center;
-    justify-content:center;  /* środek w poziomie */         /* TO powoduje „stick to bottom” w flex-kolumnie */
-    padding-top:8px;         /* mały odstęp od ceny */
+    justify-content:center;
+    padding-top:8px;
   }
-
-  .qty-row .qty{min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
-
+  .qty-row .qty{
+    min-width:24px;
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
 
   .qty-btn{
     border-radius:999px;
@@ -218,14 +278,12 @@ button.btn{
       transform .12s ease,
       box-shadow .18s ease;
   }
-
   .qty-btn:hover{
     background:var(--accent);
     border-color:color-mix(in oklab,var(--accent) 80%, black);
     color:#fff;
     transform:translateY(-1px);
   }
-
   .qty-btn:active{
     transform:translateY(0);
     box-shadow:0 2px 8px rgba(0,0,0,.25);
@@ -235,19 +293,23 @@ button.btn{
   .summary-main{font-size:18px;margin:0 0 4px}
   .summary strong{font-weight:700}
 
-  .foot{padding-top:16px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);margin-top:32px}
-
-  /* szkice okien w CSS */
-
-  /* szkic przeszklenia balkonu L */
-
-  #bk-grid .bk-daynum {
-    font-size: 14px;   /* lub np. 11px */
-    opacity: 0.8;      /* opcjonalnie delikatnie jaśniejsze */
-    display: block;    /* żeby zachować ładne ułożenie */
-    margin-top: 2px;   /* minimalny odstęp */
+  .foot{
+    padding-top:16px;
+    font-size:13px;
+    color:var(--muted);
+    border-top:1px solid var(--line);
+    margin-top:32px;
   }
 
+  /* mniejsze numerki daty w kalendarzu */
+  #bk-grid .bk-daynum{
+    font-size:14px;
+    opacity:0.8;
+    display:block;
+    margin-top:2px;
+  }
+
+  /* szkic balkonu itd. */
   .balcony-ill{
     position:relative;
     height:200px;
@@ -255,7 +317,6 @@ button.btn{
     margin:0 auto 10px;
     padding-right:15%;
   }
-
   .balcony-ill__side,
   .balcony-ill__front{
     position:absolute;
@@ -265,21 +326,11 @@ button.btn{
       color-mix(in oklab,var(--bg) 5%, white),
       color-mix(in oklab,var(--bg) 2%, rgb(183, 213, 223)));
   }
-
-  /* wąska boczna szyba (górny prostokąt) */
   .balcony-ill__side{
-    left:8px;
-    top:8px;
-    width:40%;
-    height:60%;
+    left:8px; top:8px; width:40%; height:60%;
   }
-
-  /* szerszy front (dolny prostokąt) */
   .balcony-ill__front{
-    left:8px;
-    bottom:8px;
-    width:75%;
-    height:40%;
+    left:8px; bottom:8px; width:75%; height:40%;
   }
 
   .window{
@@ -291,54 +342,38 @@ button.btn{
       color-mix(in oklab,var(--bg) 88%, white),
       color-mix(in oklab,var(--bg) 70%, white));
   }
-
   .price-item{
     display:flex;
     flex-direction:column;
     height:100%;
   }
-
-  /* wspólne pole na grafikę / schemat okna w kafelku */
   .tile-visual{
-    height:190px;           /* dostosuj pod swoje rysunki */
+    height:190px;
     display:flex;
-    align-items:flex-start;   /* rysunek „stoi” na dole pola */
+    align-items:flex-start;
     justify-content:center;
     margin:0 0 10px;
   }
+  .tile-visual--wide{align-items:center;}
 
-  /* opcjonalnie, gdyby któryś rysunek był szerszy / bardziej poziomy */
-  .tile-visual--wide{
-    align-items:center;
-  }
-
-
-  /* krótsze okna – 9/10 wysokości */
-  .window--short{
-    height:calc(var(--win-h) * 0.9);
-  }
-
+  .window--short{height:calc(var(--win-h) * 0.9);}
   .window .pane{
     position:absolute;
-    left:10px;
-    right:10px;
+    left:10px; right:10px;
     background:linear-gradient(135deg,
       color-mix(in oklab,var(--bg) 5%, white),
       color-mix(in oklab,var(--bg) 2%, rgb(183, 213, 223)));
   }
-
   .window--stacked .pane-top{
     top:10px;
     height:42.5%;
     border-bottom-width:1px;
   }
-
   .window--stacked .pane-bottom{
     bottom:10px;
     height:37.5%;
     border-top-width:1px;
   }
-
   .window-row{
     display:flex;
     gap:0;
@@ -346,7 +381,6 @@ button.btn{
     margin-bottom:12px;
   }
 
-  /* layout dla kafelka balkonu (górna/dolna tafla) */
   .price-item--balcony .balcony-layout{
     display:flex;
     align-items:center;
@@ -354,7 +388,6 @@ button.btn{
     gap:16px;
     margin-bottom:12px;
   }
-
   .balcony-labels{
     display:flex;
     flex-direction:column;
@@ -364,12 +397,10 @@ button.btn{
     letter-spacing:.05em;
     text-transform:uppercase;
   }
-
   .balcony-label{
     color:var(--muted);
     white-space:nowrap;
   }
-
   .price-item--balcony .balcony-columns{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
@@ -378,11 +409,140 @@ button.btn{
     padding-top:12px;
     border-top:1px solid var(--line);
   }
-
   .price-item--balcony .balcony-col h3{
     font-size:15px;
     margin-top:0;
   }
+
+  .summary{
+  margin-top:24px;
+}
+
+.summary-card{
+  margin-top:12px;
+  padding:20px 22px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:var(--card);
+  box-shadow:var(--shadow);
+}
+
+/* góra z kodem zniżkowym */
+.summary-top{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  margin-bottom:16px;
+}
+.summary-top-spacer{
+  flex:1;
+}
+
+/* główna "tabela" 3 kafelki */
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  align-items:stretch;
+}
+
+.summary-item-label{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+
+.summary-item-value{
+  margin-top:6px;
+  font-size:24px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.summary-item-value small{
+  margin-left:6px;
+  font-size:13px;
+  font-weight:500;
+  color:var(--muted);
+}
+
+/* opis pod kartą */
+.summary-note{
+  margin-top:10px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* KOD ZNIŻKOWY */
+.discount-box{
+  max-width:360px;
+  width:100%;
+  font-size:13px;
+}
+
+.discount-label{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.discount-row{
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+}
+
+.discount-row input{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--card);
+  font-family:inherit;
+  font-size:14px;
+}
+
+.discount-info{
+  margin-top:6px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* CENA PRZED / PO ZNIŻCE */
+.summary-price{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:8px;
+}
+
+.price-original{
+  font-size:16px;
+  text-decoration:line-through;
+  color:var(--muted);
+  display:none; /* pokażemy dopiero przy aktywnym kodzie */
+}
+
+.price-final.price-discounted{
+  color:var(--accent);
+}
+
+/* mobile: lepszy układ */
+@media (max-width:700px){
+  .summary-card{
+    padding:16px 14px;
+  }
+  .summary-top{
+    flex-direction:column;
+  }
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+  .summary-item-value{
+    font-size:20px;
+  }
+}
+
 
   @media (max-width:920px){
     .price-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -395,35 +555,30 @@ button.btn{
     main{padding:24px 0 32px}
     .price-grid,
     .price-grid--3,
-    .price-grid--1{grid-template-columns:1fr; width: 100%}
-
-    .price-item--balcony .balcony-layout{
-      flex-direction:row;
-      justify-content:space-between;
-    }
-    .price-item--balcony .balcony-columns{
+    .price-grid--1{
       grid-template-columns:1fr;
+      width:100%;
     }
-
-    .card{padding:10px 0 0;}
   }
-  </style>
+</style>
+
+
+
 </head>
 <body>
   <header>
     <div class="wrap nav">
-      <a href="/">
-        <div class="brand">
-          <div class="logo"></div>
-          <div>
-            <strong>Czyste Okna</strong><br>
-            <span class="muted">Mycie okien i balkonów</span>
-          </div>
+      <a href="/" class="brand">
+        <div class="logo"></div>
+        <div>
+          <strong>Czyste Okna</strong><br>
+          <span class="muted">Mycie okien i balkonów</span>
         </div>
       </a>
+
       <nav>
         <a class="btn ghost" href="/cennik/">Cennik</a>
-        <a class="btn ghost" href="#kontakt">Kontakt</a>
+        <a class="btn ghost" href="/#kontakt">Kontakt</a>
       </nav>
     </div>
   </header>
@@ -677,18 +832,59 @@ button.btn{
 
       <h1 style="margin-top:30px;">Podsumowanie</h1>
 
-      <div class="summary">
-        <p class="summary-main">
-          Razem: <strong><span id="windowsCount">0</span> okien</strong>
-          <span id="balconySummary"></span><br>
-          Szacunkowa cena: <strong id="totalPrice">0 zł</strong> •
-          Szacunkowy czas: <strong id="totalTime">0 min</strong>
-        </p>
-        <p class="muted">
-          To orientacyjna wycena dla standardowych zabrudzeń. Przy nietypowych oknach lub bardzo
-          zabrudzonych ramach cena może się nieznacznie różnić.
-        </p>
+    <div class="summary">
+      <div class="summary-card">
+
+        <!-- GÓRA: kod zniżkowy -->
+        <div class="summary-top">
+          <div class="summary-top-spacer"></div>
+
+          <div class="discount-box">
+            <label class="discount-label">Kod zniżkowy</label>
+            <div class="discount-row">
+              <input id="discountCode"
+                    type="text">
+              <button id="applyDiscountBtn"
+                      class="btn"
+                      type="button">Zastosuj</button>
+            </div>
+            <div id="discountInfo" class="discount-info"></div>
+          </div>
+        </div>
+
+        <!-- DÓŁ: 3 kafelki z podsumowaniem -->
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item-label">Liczba okien</div>
+            <div class="summary-item-value">
+              <span id="windowsCount">0</span>
+              <small id="balconySummary"></small>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-item-label">Szacunkowa cena</div>
+            <div class="summary-item-value summary-price">
+              <span id="totalPriceOriginal" class="price-original"></span>
+              <span id="totalPrice" class="price-final">0 zł</span>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-item-label">Szacunkowy czas</div>
+            <div class="summary-item-value">
+              <span id="totalTime">0 min</span>
+            </div>
+          </div>
+        </div>
+
       </div>
+
+      <p class="muted summary-note">
+        Cena może minimalnie różnić się przy nietypowych konstrukcjach szyb.
+      </p>
+    </div>
+
 
     </section>
 
@@ -700,7 +896,7 @@ button.btn{
         potwierdzimy szczegóły i cenę na podstawie kalkulatora powyżej.
       </p>
 
-      <div class="card">
+      <div class="card" style="padding: 0; padding-top:10px;">
         <form id="bookingForm">
           <div class="week-toolbar">
             <button type="button" id="bk-prev" class="wkbtn" aria-label="Poprzedni tydzień">‹</button>
@@ -784,20 +980,8 @@ button.btn{
     </section>
     <!-- ▲ KONIEC BLOKU REZERWACJI ▲ -->
 
-    <section class="section">
-      <h2>Co dalej?</h2>
-      <p class="muted">
-        Zadzwoń lub napisz na WhatsApp i podeślij zdjęcia okien / balkonu – potwierdzimy
-        dokładną cenę i zaproponujemy najbliższe wolne terminy.
-      </p>
-      <p>
-        <a class="btn" href="tel:+48735400610">Zadzwoń: 735 400 610</a>
-        <a class="btn" href="https://wa.me/48735400610" target="_blank" rel="noopener">WhatsApp</a>
-      </p>
-    </section>
-
     <div class="foot">
-      © <span id="year"></span> Czyste Okna Gdańsk • Cennik orientacyjny – ostateczna cena po ustaleniu zakresu prac.
+      © <span id="year"></span> Czyste Okna Gdańsk
     </div>
   </main>
 
@@ -812,6 +996,15 @@ button.btn{
       const balconySummaryEl = document.getElementById('balconySummary');
       const totalPriceEl     = document.getElementById('totalPrice');
       const totalTimeEl      = document.getElementById('totalTime');
+
+            // --- kody zniżkowe (prosto na froncie) ---
+      const DISCOUNT_CODES = {
+        "LETNICA20": { percent: 20 },
+        // możesz dodać kolejne: "ZIMA20": { percent: 20 }
+      };
+
+      // aktualnie zastosowany kod (albo null)
+      let activeDiscount = null;
 
       // ile bloków 60-minutowych trzeba zarezerwować
       function calcBlocks(totalMinutes){
@@ -849,6 +1042,58 @@ button.btn{
 
         return hours + ' h';
       }
+
+
+            // --- obsługa kodu rabatowego ---
+      const discountInput = document.getElementById('discountCode');
+      const discountBtn   = document.getElementById('applyDiscountBtn');
+      const discountInfo  = document.getElementById('discountInfo');
+
+      // jeśli elementy istnieją (zawsze będą, ale to zabezpieczenie)
+      if (discountBtn && discountInput && discountInfo) {
+
+        // kliknięcie przycisku "Zastosuj"
+        discountBtn.addEventListener('click', () => {
+
+          // pobieramy kod wpisany w pole, np. "okna10"
+          const raw = discountInput.value.trim().toUpperCase();
+
+          // nic nie wpisano → usuń rabat
+          if (!raw) {
+            activeDiscount = null;
+            discountInfo.textContent = "Wpisz kod zniżkowy.";
+            discountInfo.style.color = "var(--muted)";
+            updateTotals();
+            return;
+          }
+
+          // sprawdzamy czy taki kod istnieje
+          const def = DISCOUNT_CODES[raw];
+
+          // jeśli nie istnieje → błąd
+          if (!def) {
+            activeDiscount = null;
+            discountInfo.textContent = "Nieprawidłowy lub nieaktywny kod.";
+            discountInfo.style.color = "#b3261e"; // lekka czerwień
+            updateTotals();
+            return;
+          }
+
+          // --- KOD JEST POPRAWNY! ---
+          activeDiscount = {
+            code: raw,
+            percent: def.percent
+          };
+
+          discountInfo.textContent =
+            `Zastosowano kod: ${raw} (${def.percent}% rabatu).`;
+          discountInfo.style.color = "var(--accent)";
+
+          // przelicz wszystko ponownie
+          updateTotals();
+        });
+      }
+
 
       function updateTotals(){
         let windowsCount  = 0;   // tylko zwykłe okna / drzwi
@@ -928,9 +1173,11 @@ button.btn{
           balconySummaryEl.textContent = '';
         }
 
-        // cena
+        // cena + ewentualna zniżka
         let totalPriceLabel = '0 zł';
+
         if (totalPrice === 0){
+          activeDiscount = null; // nic nie liczymy, jak nie ma okien
           totalPriceEl.textContent = '0 zł';
         } else {
           totalPriceLabel = totalPrice.toLocaleString('pl-PL', {
@@ -938,8 +1185,35 @@ button.btn{
             currency: 'PLN',
             maximumFractionDigits: 0
           });
-          totalPriceEl.textContent = totalPriceLabel;
+
+          // jeśli jest aktywny kod rabatowy – przelicz
+          let finalPrice = totalPrice;
+          let finalPriceLabel = totalPriceLabel;
+
+          if (activeDiscount && activeDiscount.percent > 0) {
+            finalPrice = Math.round(totalPrice * (1 - activeDiscount.percent / 100));
+            finalPriceLabel = finalPrice.toLocaleString('pl-PL', {
+              style: 'currency',
+              currency: 'PLN',
+              maximumFractionDigits: 0
+            });
+
+            // ładne: stara cena przekreślona + nowa na zielono
+            totalPriceEl.innerHTML =
+              `<span style="text-decoration:line-through; opacity:.6; margin-right:6px;">
+                 ${totalPriceLabel}
+               </span>
+               <span style="color:var(--accent); font-weight:700;">
+                 ${finalPriceLabel}
+               </span>`;
+          } else {
+            // brak zniżki
+            totalPriceEl.textContent = totalPriceLabel;
+          }
+
+          // uzupełnimy opis dla maila / rezerwacji poniżej
         }
+
 
         // czas (ładny napis) + liczba bloków
         const timeLabel  = formatTime(totalMinutes);
@@ -947,24 +1221,63 @@ button.btn{
         totalTimeEl.textContent = timeLabel;
 
         // ===== przekazujemy stan kalkulatora dla modułu rezerwacji =====
-        const textLines = [];
+        // pełne info (dla nas – do kalendarza / maila wewnętrznego)
+        const fullLines = [];
+        const headerLine =
+          `Okna: ${windowsCount}${hasBalcony ? ' + przeszklenie balkonowe' : ''}`;
 
-        textLines.push(`Okna: ${windowsCount}${hasBalcony ? ' + przeszklenie balkonowe' : ''}`);
+        fullLines.push(headerLine);
 
         breakdown
           .filter(item => item.qty > 0)
           .forEach(item => {
-            textLines.push(
+            fullLines.push(
               `• ${item.label}: ${item.qty} szt. × ${item.unitPrice} zł = ${item.subtotal} zł`
             );
           });
 
+        // info o cenie do pełnego opisu
         if (totalPrice > 0){
-          textLines.push(`Szacunkowa cena: ${totalPriceLabel}`);
+          fullLines.push(`Szacunkowa cena (bez rabatu): ${totalPriceLabel}`);
         }
         if (totalMinutes > 0){
-          textLines.push(`Szacunkowy czas: ${timeLabel} (${blocks} blok(i) × 60 min)`);
+          fullLines.push(`Szacunkowy czas: ${timeLabel} (${blocks} blok(i) × 60 min)`);
         }
+
+        // jeśli jest rabat – dopisz w opisie, jaka cena po rabacie
+        if (activeDiscount && activeDiscount.percent > 0 && totalPrice > 0) {
+          const discounted = Math.round(totalPrice * (1 - activeDiscount.percent / 100));
+          const discountedLabel = discounted.toLocaleString('pl-PL', {
+            style: 'currency',
+            currency: 'PLN',
+            maximumFractionDigits: 0
+          });
+
+          fullLines.push(
+            `Zastosowano kod: ${activeDiscount.code} (${activeDiscount.percent}% rabatu). ` +
+            `Cena po rabacie: ${discountedLabel}`
+          );
+        }
+
+        // wersja uproszczona – tylko dla klienta
+        const clientLines = [headerLine];
+        if (totalPrice > 0){
+          if (activeDiscount && activeDiscount.percent > 0) {
+            const discounted = Math.round(totalPrice * (1 - activeDiscount.percent / 100));
+            const discountedLabel = discounted.toLocaleString('pl-PL', {
+              style: 'currency',
+              currency: 'PLN',
+              maximumFractionDigits: 0
+            });
+            clientLines.push(`Szacunkowa cena po rabacie: ${discountedLabel}`);
+          } else {
+            clientLines.push(`Szacunkowa cena: ${totalPriceLabel}`);
+          }
+        }
+        if (totalMinutes > 0){
+          clientLines.push(`Szacunkowy czas: ${timeLabel} (${blocks} blok(i) × 60 min)`);
+        }
+
 
         window.BK_CALC_STATE = {
           windowsCount,
@@ -973,15 +1286,19 @@ button.btn{
           totalMinutes,
           blocks,
           breakdown,
-          text: textLines.join('\n')
+          discountCode: activeDiscount ? activeDiscount.code : null,
+          discountPercent: activeDiscount ? activeDiscount.percent : 0,
+          text: fullLines.join('\n'),
+          textFull: fullLines.join('\n'),
+          textClient: clientLines.join('\n')
         };
 
         // powiadamiamy booking.js, że kalkulator się zmienił
         if (typeof window.dispatchEvent === 'function'){
           window.dispatchEvent(new CustomEvent('bk-calc-change'));
         }
-      }
 
+      }
       // obsługa przycisków
       cards.forEach(card => {
         if (card.classList.contains('price-item--balcony')){
@@ -1034,12 +1351,18 @@ button.btn{
         }
       });
 
+
+
       updateTotals();
     })();
+
   </script>
   <script>
+    // WŁAŚNIE TUTAJ mówimy booking.js, że kalkulator jest WYMAGANY
+    window.BK_REQUIRE_CALC_SELECTION = true;
+
     // KONFIG – ten sam URL co w /rezerwacja/index.html
-    window.BK_API_BASE = "https://script.google.com/macros/s/AKfycbyaZYnwXb7EhGu1HUsK7lv_4PspzbLuKHpXtDeYt0xv7KugYEKWlFxo5rAtvmGbfEHNNw/exec";
+    window.BK_API_BASE = "https://script.google.com/macros/s/AKfycbxWQux-MhOuTcKF8_tSLmfUOE1zFFs3hDffl8N4QCkFwKy43RNz_0YxYXs8gioYc_oJgQ/exec";
   </script>
   <script src="/rezerwacja/booking.js" defer></script>
 </body>

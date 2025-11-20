@@ -659,6 +659,14 @@
     const address = document.getElementById("bk-address").value.trim();
     const notes = document.getElementById("bk-notes").value.trim();
 
+    const requireCalcSelection = !!window.BK_REQUIRE_CALC_SELECTION;
+    const calcState = window.BK_CALC_STATE || {};
+
+    if (requireCalcSelection && (!calcState.windowsCount || calcState.windowsCount <= 0)) {
+      setStatus("Najpierw wybierz przybliżoną liczbę okien w kalkulatorze powyżej.");
+      return;
+    }   
+
     if (!isValidPhone(prefix, phoneRaw)) {
       setStatus(
         prefix === "+48"
@@ -705,6 +713,10 @@
       // dorzucamy dane z kalkulatora (jeśli są)
       if (calcMeta) {
         body.set("calcText", calcMeta.text || "");
+        body.set(
+          "calcTextClient",
+          calcMeta.textClient || calcMeta.text || ""
+        ); // skrót dla klienta
         body.set("calcBlocks", String(calcMeta.blocks || ""));
         body.set("calcWindows", String(calcMeta.windowsCount || 0));
         body.set("calcPrice", String(calcMeta.totalPrice || 0));
