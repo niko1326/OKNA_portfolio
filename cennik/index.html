@@ -414,6 +414,38 @@
     margin-top:0;
   }
 
+/* ZIMOWA BLOKADA PRZESZKLEŃ BALKONOWYCH */
+.price-item--balcony.is-disabled{
+  position:relative;
+  pointer-events:none;
+}
+
+/* rozmywamy wnętrze kafla: rysunek + kolumny z przyciskami */
+.price-item--balcony.is-disabled .balcony-layout,
+.price-item--balcony.is-disabled .balcony-columns{
+  filter: blur(3px);
+  opacity:0.4;
+}
+
+/* komunikat na wierzchu */
+.price-item--balcony.is-disabled::after{
+  content:"Zimą nie myjemy przeszkleń balkonowych. Wrócimy do nich w cieplejszych miesiącach";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  text-align:center;
+  color:white;
+  font-size:20px;
+  font-weight:600;
+  border-radius:var(--radius);
+  text-shadow:0 1px 4px rgba(0,0,0,0.9); /* obrys tekstu */
+}
+
+
+
   .summary{
   margin-top:24px;
 }
@@ -863,7 +895,7 @@
           </div>
 
           <div class="summary-item">
-            <div class="summary-item-label">Szacunkowa cena</div>
+            <div class="summary-item-label">Szacunkowa cena (MIN 100zł)</div>
             <div class="summary-item-value summary-price">
               <span id="totalPriceOriginal" class="price-original"></span>
               <span id="totalPrice" class="price-final">0 zł</span>
@@ -989,6 +1021,8 @@
     // rok w stopce
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    const BALCONY_BOOKING_ENABLED = false;
+
     // kalkulator: ilości, suma i czas
     (function(){
       const cards = document.querySelectorAll('.price-item');
@@ -996,6 +1030,24 @@
       const balconySummaryEl = document.getElementById('balconySummary');
       const totalPriceEl     = document.getElementById('totalPrice');
       const totalTimeEl      = document.getElementById('totalTime');
+
+      // znajdź kafel przeszkleń balkonowych
+      const balconyCard = document.querySelector('.price-item--balcony');
+
+      // jeśli zima → blokujemy możliwość dodawania tafli i pokazujemy overlay
+      if (!BALCONY_BOOKING_ENABLED && balconyCard){
+        balconyCard.classList.add('is-disabled');
+
+        // na wszelki wypadek zerujemy ilości w dataset
+        balconyCard.dataset.qtyTop = '0';
+        balconyCard.dataset.qtyBottom = '0';
+
+        // wyłączamy przyciski w środku (gdyby pointer-events gdzieś nie zadziałał)
+        balconyCard.querySelectorAll('button').forEach(btn => {
+          btn.setAttribute('disabled','true');
+        });
+      }
+
 
             // --- kody zniżkowe (prosto na froncie) ---
       const DISCOUNT_CODES = {
@@ -1035,8 +1087,8 @@
           return '1 h';
         }
 
-        // jeżeli przekroczymy 1:15, 2:15, 3:15... → zaokrąglamy w górę
-        if (mins > 15){
+
+        if (mins > 5){
           hours += 1;
         }
 

@@ -662,10 +662,24 @@
     const requireCalcSelection = !!window.BK_REQUIRE_CALC_SELECTION;
     const calcState = window.BK_CALC_STATE || {};
 
+    // MINIMALNA WARTOŚĆ ZLECENIA – 100 zł PO RABACIE
+    if (requireCalcSelection) {
+      const basePrice = calcState.totalPrice || 0;           // cena przed rabatem
+      const percent   = calcState.discountPercent || 0;      // % rabatu z kalkulatora
+      const finalPrice = percent > 0
+        ? Math.round(basePrice * (1 - percent / 100))
+        : basePrice;
+
+      if (finalPrice > 0 && finalPrice < 100) {
+        setStatus("Minimalna wartość zlecenia to 100 zł (liczona po rabacie). Dodaj więcej okien, aby kontynuować.");
+        return;
+      }
+    }
+
     if (requireCalcSelection && (!calcState.windowsCount || calcState.windowsCount <= 0)) {
       setStatus("Najpierw wybierz przybliżoną liczbę okien w kalkulatorze powyżej.");
       return;
-    }   
+    }
 
     if (!isValidPhone(prefix, phoneRaw)) {
       setStatus(
