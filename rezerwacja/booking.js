@@ -34,69 +34,6 @@
 
   // ========= UTILS =========
 
-  // Live format telefonu z użyciem onlyDigits / formatDisplay / isValidPhone
-  function attachPhoneFormatting() {
-    const $prefix = document.getElementById("bk-prefix");
-    const $phone = document.getElementById("bk-phone");
-    if (!$prefix || !$phone) return;
-
-    // placeholder pod PL/inne
-    function updatePlaceholder() {
-      $phone.placeholder =
-        $prefix.value === "+48" ? "123 123 123" : "wpisz numer";
-    }
-
-    // ile cyfr jest przed kursorem
-    function digitsBeforeCaret(input) {
-      const pos = input.selectionStart || 0;
-      let count = 0;
-      for (let i = 0; i < pos; i++) if (/\d/.test(input.value[i])) count++;
-      return count;
-    }
-
-    // ustaw kursor po N-tej cyfrze w sformatowanym stringu
-    function setCaretByDigitIndex(input, digitIndex, formatted) {
-      if (digitIndex <= 0) {
-        input.value = formatted;
-        input.setSelectionRange(0, 0);
-        return;
-      }
-      let seen = 0,
-        pos = formatted.length;
-      for (let i = 0; i < formatted.length; i++) {
-        if (/\d/.test(formatted[i])) seen++;
-        if (seen === digitIndex) {
-          pos = i + 1;
-          break;
-        }
-      }
-      input.value = formatted;
-      input.setSelectionRange(pos, pos);
-    }
-
-    // właściwe formatowanie na żywo
-    function reformatPreservingCaret() {
-      const before = digitsBeforeCaret($phone); // liczba cyfr przed kursem
-      const raw = onlyDigits($phone.value); // -> helper
-      const fmt = formatDisplay($prefix.value, raw); // -> helper
-      setCaretByDigitIndex($phone, Math.min(before, raw.length), fmt);
-    }
-
-    // podpięcie eventów
-    $phone.addEventListener("input", reformatPreservingCaret);
-    $phone.addEventListener("blur", reformatPreservingCaret);
-    $phone.addEventListener("paste", () =>
-      setTimeout(reformatPreservingCaret)
-    );
-    $prefix.addEventListener("change", () => {
-      updatePlaceholder();
-      reformatPreservingCaret();
-    });
-
-    // start
-    updatePlaceholder();
-    reformatPreservingCaret();
-  }
 
   // ===== integracja z kalkulatorem na stronie cennika =====
   function applyCalcStateFromCalculator() {
@@ -659,6 +596,43 @@
     const address = document.getElementById("bk-address").value.trim();
     const notes = document.getElementById("bk-notes").value.trim();
 
+    // --- nowa, uproszczona obsługa telefonu ---
+    const digits = (phoneInput || "").replace(/\D+/g, ""); // tylko cyfry
+
+    if (!digits) {
+      setStatus("Podaj numer telefonu.");
+      return;
+    }
+
+    let normalizedDigits = digits;
+
+    if (prefix === "+48") {
+      // typowe przypadki autofillu:
+      // +48 600 111 222 -> "48600111222"
+      // 0048 600 111 222 -> "0048600111222"
+      // 600111222 -> "600111222"
+
+      // usuń wiodące 00 / 48 jeśli numer jest “za długi”
+      if (normalizedDigits.length > 9) {
+        // jeśli końcówka ma 9 cyfr, bierzemy ostatnie 9 (lokalna część)
+        normalizedDigits = normalizedDigits.slice(-9);
+      }
+
+      if (normalizedDigits.length !== 9) {
+        setStatus("Numer telefonu (PL) musi mieć 9 cyfr.");
+        return;
+      }
+    } else {
+      // dla zagranicznych: bardzo luźna walidacja
+      if (normalizedDigits.length < 6 || normalizedDigits.length > 15) {
+        setStatus("Numer telefonu powinien mieć od 6 do 15 cyfr.");
+        return;
+      }
+    }
+
+    const phoneE164 = prefix + normalizedDigits; // to wysyłasz do API
+    // --- koniec uproszczonej obsługi telefonu ---
+
     const requireCalcSelection = !!window.BK_REQUIRE_CALC_SELECTION;
     const calcState = window.BK_CALC_STATE || {};
 
@@ -695,8 +669,6 @@
       setStatus("Podaj poprawny adres e-mail.");
       return;
     }
-
-    const phoneE164 = prefix + phoneRaw; // np. +48123123123
 
     if (!date || chosen.length === 0) {
       setStatus("Zaznacz bloki w jednym dniu.");
@@ -797,6 +769,5 @@
 
     $refresh?.addEventListener("click", () => fetchWeek(currentWeekStart));
     $form?.addEventListener("submit", submitBooking);
-    attachPhoneFormatting();
   })();
 })();
